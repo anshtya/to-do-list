@@ -1,8 +1,12 @@
 package com.example.todolist
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
@@ -23,8 +27,7 @@ class MainActivity : AppCompatActivity(), ItemDelete {
         listRecyclerView.adapter = adapter
         listRecyclerView.setHasFixedSize(true)
 
-        val btnAddTodo = binding.btnAddTodo
-        btnAddTodo.setOnClickListener {
+        binding.btnAddTodo.setOnClickListener {
             if (isEmpty()) {
                 binding.txtItem.setText("")
             } else {
@@ -42,7 +45,6 @@ class MainActivity : AppCompatActivity(), ItemDelete {
         }
         return false
     }
-
     override fun onItemDelete(position: Int) {
         todoList.removeAt(position)
     }
