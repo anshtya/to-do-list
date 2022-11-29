@@ -20,7 +20,9 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val adapter = TodoAdapter(viewmodel)
+        val adapter = TodoAdapter{
+            viewmodel.onTodoDelete(it)
+        }
         listRecyclerView = binding.listRecyclerView
         listRecyclerView.layoutManager = LinearLayoutManager(this)
         listRecyclerView.adapter = adapter

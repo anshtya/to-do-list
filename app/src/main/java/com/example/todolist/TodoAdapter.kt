@@ -4,15 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ItemViewBinding
-import com.example.todolist.viewmodel.TodoViewmodel
 
-class TodoAdapter(private val listener: TodoViewmodel) : RecyclerView.Adapter<ItemViewHolder>() {
+class TodoAdapter(private val listener: (Int) -> Unit) : RecyclerView.Adapter<ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding = ItemViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val itemViewHolder = ItemViewHolder(binding)
         itemViewHolder.btnDelete.setOnClickListener {
-            listener.onTodoDelete(itemViewHolder.adapterPosition)
+            listener(itemViewHolder.adapterPosition)
             notifyItemRemoved(itemViewHolder.adapterPosition)
         }
         return itemViewHolder
