@@ -3,12 +3,12 @@ package com.example.todolist
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.databinding.ItemViewBinding
+import com.example.todolist.databinding.TodoViewBinding
 
 class TodoAdapter(private val listener: (Int) -> Unit) : RecyclerView.Adapter<ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding = ItemViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = TodoViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val itemViewHolder = ItemViewHolder(binding)
         itemViewHolder.btnDelete.setOnClickListener {
             listener(itemViewHolder.adapterPosition)
@@ -26,7 +26,7 @@ class TodoAdapter(private val listener: (Int) -> Unit) : RecyclerView.Adapter<It
     }
 
 }
-class ItemViewHolder(private val binding: ItemViewBinding) : RecyclerView.ViewHolder(binding.root) {
+class ItemViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
     val tvItem = binding.tvItem
     val btnDelete = binding.btnDelete
 }
