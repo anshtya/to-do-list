@@ -3,50 +3,25 @@ package com.example.todolist
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.databinding.ActivityMainBinding
-import com.example.todolist.viewmodel.TodoViewmodel
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupActionBarWithNavController
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(R.layout.activity_main){
 
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var listRecyclerView: RecyclerView
-    private val viewmodel: TodoViewmodel by viewModels()
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        val adapter = TodoAdapter{
-            viewmodel.onTodoDelete(it)
-        }
-        listRecyclerView = binding.listRecyclerView
-        listRecyclerView.layoutManager = LinearLayoutManager(this)
-        listRecyclerView.adapter = adapter
-        listRecyclerView.setHasFixedSize(true)
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-        binding.btnAddTodo.setOnClickListener {
-            if (isEmpty()) {
-                binding.txtItem.text = null
-            } else {
-                val task = binding.txtItem.text.toString()
-                viewmodel.insertTodo(task)
-                binding.txtItem.text = null
-                adapter.notifyItemInserted(adapter.itemCount)
-            }
-        }
+        setupActionBarWithNavController(navController)
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    /*
-    * Checks if EditText is empty or not
-     */
-    private fun isEmpty(): Boolean{
-        if(binding.txtItem.text.toString().trim().isEmpty()) {
-            return true
-        }
-        return false
-    }
 }
