@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/todoFragment"
         android:name="com.example.todolist.TodoFragment"
-        android:label="fragment_todo"
-        tools:layout="@layout/fragment_todo" >
+        android:label="To-Do List"
+        tools:layout="@layout/fragment_todo">
         <action
             android:id="@+id/action_todoFragment_to_todoAddFragment"
             app:destination="@id/todoAddFragment" />
@@ -17,8 +17,8 @@
     <fragment
         android:id="@+id/todoAddFragment"
         android:name="com.example.todolist.TodoAddFragment"
-        android:label="fragment_todo_add"
-        tools:layout="@layout/fragment_todo_add" >
+        android:label="Add Todo"
+        tools:layout="@layout/fragment_todo_add">
         <action
             android:id="@+id/action_todoAddFragment_to_todoFragment"
             app:destination="@id/todoFragment"
