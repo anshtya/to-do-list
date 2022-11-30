@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.adapter.TodoAdapter
@@ -29,7 +30,7 @@ class TodoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = TodoAdapter{
+        val adapter = TodoAdapter {
             viewmodel.onTodoDelete(it)
         }
         listRecyclerView = binding.listRecyclerView
@@ -38,24 +39,7 @@ class TodoFragment : Fragment() {
         listRecyclerView.setHasFixedSize(true)
 
         binding.btnAddTodo.setOnClickListener {
-            if (isEmpty()) {
-                binding.txtItem.text = null
-            } else {
-                val task = binding.txtItem.text.toString()
-                viewmodel.insertTodo(task)
-                binding.txtItem.text = null
-                adapter.notifyItemInserted(adapter.itemCount)
-            }
+            findNavController().navigate(R.id.action_todoFragment_to_todoAddFragment)
         }
-    }
-
-    /*
-    * Checks if EditText is empty or not
-     */
-    private fun isEmpty(): Boolean{
-        if(binding.txtItem.text.toString().trim().isEmpty()) {
-            return true
-        }
-        return false
     }
 }

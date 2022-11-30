@@ -21,6 +21,8 @@
         tools:layout="@layout/fragment_todo_add" >
         <action
             android:id="@+id/action_todoAddFragment_to_todoFragment"
-            app:destination="@id/todoFragment" />
+            app:destination="@id/todoFragment"
+            app:popUpTo="@id/todoFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
