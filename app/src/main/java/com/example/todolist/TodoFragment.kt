@@ -39,7 +39,8 @@ class TodoFragment : Fragment() {
         listRecyclerView.setHasFixedSize(true)
 
         binding.btnAddTodo.setOnClickListener {
-            findNavController().navigate(R.id.action_todoFragment_to_todoAddFragment)
+            val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment()
+            findNavController().navigate(action)
         }
     }
 }
