@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.adapter.TodoAdapter
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.example.todolist.viewmodel.TodoViewmodel
 
