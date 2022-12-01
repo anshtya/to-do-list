@@ -40,11 +40,11 @@ class TodoAddFragment : Fragment() {
 
     private fun addNewTodo(){
         if (isEmpty()) {
-            binding.txtEnterTodo.editText?.text = null
+            binding.txtEnterTodo.text = null
         } else {
-            val todo = binding.txtEnterTodo.editText?.text.toString()
+            val todo = binding.txtEnterTodo.text.toString()
             viewmodel.insertTodo(todo)
-            binding.txtEnterTodo.editText?.text = null
+            binding.txtEnterTodo.text = null
 
             val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
             findNavController().navigate(action)
@@ -55,7 +55,7 @@ class TodoAddFragment : Fragment() {
     * Checks if EditText is empty or not
      */
     private fun isEmpty(): Boolean{
-        if(binding.txtEnterTodo.editText?.text.toString().trim().isEmpty()) {
+        if(binding.txtEnterTodo.text.toString().trim().isEmpty()) {
             return true
         }
         return false
