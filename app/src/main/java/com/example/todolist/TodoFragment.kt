@@ -5,19 +5,28 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.adapter.TodoAdapter
 import com.example.todolist.databinding.FragmentTodoBinding
-import com.example.todolist.viewmodel.TodoViewmodel
+import com.example.todolist.viewmodel.TodoViewModel
+import com.example.todolist.viewmodel.TodoViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class TodoFragment : Fragment() {
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var listRecyclerView: RecyclerView
-    private val viewmodel: TodoViewmodel by viewModels()
+    private val viewmodel: TodoViewModel by activityViewModels{
+        TodoViewModelFactory(
+            (activity?.application as TodoApplication).database
+                .todoDao()
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,14 +38,16 @@ class TodoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val adapter = TodoAdapter {
-            viewmodel.onTodoDelete(it)
-        }
+        val adapter = TodoAdapter()
         listRecyclerView = binding.listRecyclerView
         listRecyclerView.layoutManager = LinearLayoutManager(context)
         listRecyclerView.adapter = adapter
         listRecyclerView.setHasFixedSize(true)
+        lifecycle.coroutineScope.launch(Dispatchers.IO) {
+            viewmodel.allTodo.collect() {
+                adapter.submitList(it)
+            }
+        }
 
         binding.btnAddTodo.setOnClickListener {
             val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment()

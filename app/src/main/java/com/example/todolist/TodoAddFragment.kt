@@ -5,15 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todolist.databinding.FragmentTodoAddBinding
-import com.example.todolist.viewmodel.TodoViewmodel
+import com.example.todolist.viewmodel.TodoViewModel
+import com.example.todolist.viewmodel.TodoViewModelFactory
 
 class TodoAddFragment : Fragment() {
 
     private lateinit var binding: FragmentTodoAddBinding
-    private val viewmodel: TodoViewmodel by viewModels()
+    private val viewmodel: TodoViewModel by activityViewModels{
+        TodoViewModelFactory(
+            (activity?.application as TodoApplication).database
+                .todoDao()
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,16 +34,20 @@ class TodoAddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSaveTodo.setOnClickListener {
-            if (isEmpty()) {
-                binding.txtEnterTodo.editText?.text = null
-            } else {
-                val task = binding.txtEnterTodo.editText?.text.toString()
-                viewmodel.insertTodo(task)
-                binding.txtEnterTodo.editText?.text = null
+            addNewTodo()
+        }
+    }
 
-                val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
-                findNavController().navigate(action)
-            }
+    private fun addNewTodo(){
+        if (isEmpty()) {
+            binding.txtEnterTodo.editText?.text = null
+        } else {
+            val todo = binding.txtEnterTodo.editText?.text.toString()
+            viewmodel.insertTodo(todo)
+            binding.txtEnterTodo.editText?.text = null
+
+            val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
+            findNavController().navigate(action)
         }
     }
 

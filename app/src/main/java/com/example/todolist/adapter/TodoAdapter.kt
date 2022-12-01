@@ -2,35 +2,40 @@ package com.example.todolist.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.data.todo.Todo
 import com.example.todolist.databinding.TodoViewBinding
-import com.example.todolist.todoList
 
-class TodoAdapter(private val listener: (Int) -> Unit) : RecyclerView.Adapter<ItemViewHolder>() {
+class TodoAdapter : ListAdapter<Todo, TodoAdapter.TodoViewHolder>(DiffCallback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding = TodoViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val itemViewHolder = ItemViewHolder(binding)
-        itemViewHolder.btnDelete.setOnClickListener {
-            listener(itemViewHolder.adapterPosition)
-            notifyItemRemoved(itemViewHolder.adapterPosition)
+    class TodoViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
+         fun bind(todo: Todo){
+            binding.tvTodo.text = todo.name
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
+        val binding = TodoViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val itemViewHolder = TodoViewHolder(binding)
         return itemViewHolder
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.tvItem.text = todoList[position]
+    override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int {
-        return todoList.size
+    companion object {
+        private val DiffCallback = object : DiffUtil.ItemCallback<Todo>() {
+            override fun areItemsTheSame(oldItem: Todo, newItem: Todo): Boolean {
+                return oldItem === newItem
+            }
+
+            override fun areContentsTheSame(oldItem: Todo, newItem: Todo): Boolean {
+                return oldItem.name == newItem.name
+            }
+        }
     }
 
-}
-class ItemViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
-    val tvItem = binding.tvItem
-    val btnDelete = binding.btnDelete
-}
-interface TodoDelete{
-    fun onTodoDelete(position: Int)
 }
