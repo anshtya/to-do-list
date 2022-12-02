@@ -8,15 +8,23 @@
 
     <TextView
         android:id="@+id/tvTodo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Title"
-        android:textSize="20sp"
         style="@style/TextOnScreen"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.031"
+        app:layout_constraintStart_toEndOf="@+id/chkIsDone"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod te." />
+
+    <CheckBox
+        android:id="@+id/chkIsDone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
