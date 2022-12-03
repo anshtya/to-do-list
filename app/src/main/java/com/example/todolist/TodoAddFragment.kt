@@ -45,9 +45,7 @@ class TodoAddFragment : Fragment() {
             val todo = binding.txtEnterTodo.text.toString()
             viewmodel.insertTodo(todo)
             binding.txtEnterTodo.text = null
-
-            val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
-            findNavController().navigate(action)
+            findNavController().navigateUp()
         }
     }
 

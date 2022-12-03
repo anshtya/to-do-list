@@ -15,17 +15,28 @@ class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
         insertTodo(newTodo)
     }
 
-//    override fun onTodoDelete(position: Int) {
-//        todoList.removeAt(position)
-//    }
+    fun updateTodo(todoId: Int, todoName: String, todoIsDone: Boolean){
+        val updatedTodo = updateTodoEntry(todoId, todoName, todoIsDone)
+        updateTodo(updatedTodo)
+    }
 
     private fun newTodoEntry(todoName: String) : Todo{
         return Todo(name = todoName, isDone = false)
     }
 
+    private fun updateTodoEntry(todoId: Int, todoName: String, todoIsDone: Boolean) : Todo{
+        return Todo(id = todoId, name = todoName, isDone = todoIsDone)
+    }
+
     private fun insertTodo(todo: Todo){
         viewModelScope.launch {
             TodoDao.insertTodo(todo)
+        }
+    }
+
+    private fun updateTodo(todo: Todo){
+        viewModelScope.launch {
+            TodoDao.updateTodo(todo)
         }
     }
 
