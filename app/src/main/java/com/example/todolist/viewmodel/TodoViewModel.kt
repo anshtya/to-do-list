@@ -3,7 +3,6 @@ package com.example.todolist.viewmodel
 import androidx.lifecycle.*
 import com.example.todolist.data.todo.Todo
 import com.example.todolist.data.todo.TodoDao
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {

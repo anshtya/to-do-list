@@ -15,7 +15,7 @@ import com.example.todolist.viewmodel.TodoViewModelFactory
 class TodoAddFragment : Fragment() {
 
     private lateinit var binding: FragmentTodoAddBinding
-    private val viewmodel: TodoViewModel by activityViewModels{
+    private val viewModel: TodoViewModel by activityViewModels{
         TodoViewModelFactory(
             (activity?.application as TodoApplication).database
                 .todoDao()
@@ -26,7 +26,7 @@ class TodoAddFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentTodoAddBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -44,7 +44,7 @@ class TodoAddFragment : Fragment() {
             binding.txtEnterTodo.text = null
         } else {
             val todo = binding.txtEnterTodo.text.toString()
-            viewmodel.insertTodo(todo)
+            viewModel.insertTodo(todo)
             binding.txtEnterTodo.text = null
             findNavController().navigateUp()
         }
