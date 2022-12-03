@@ -11,10 +11,6 @@ import com.example.todolist.databinding.TodoViewBinding
 
 class TodoAdapter(private val listener: TodoFragment): ListAdapter<Todo, TodoAdapter.TodoViewHolder>(DiffCallback) {
 
-    init{
-        setHasStableIds(true)
-    }
-
     class TodoViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
         val chkIsDone = binding.chkIsDone
         fun bind(todo: Todo){
@@ -41,8 +37,6 @@ class TodoAdapter(private val listener: TodoFragment): ListAdapter<Todo, TodoAda
             }
         }
     }
-
-    override fun getItemId(position: Int): Long = position.toLong()
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<Todo>() {
