@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
 
-    val allTodo: Flow<List<Todo>> = TodoDao.getAll()
+    val allTodo: LiveData<List<Todo>> = TodoDao.getAll().asLiveData()
 
     fun insertTodo(todo: String){
         val newTodo = newTodoEntry(todo)
@@ -20,11 +20,20 @@ class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
         updateTodo(updatedTodo)
     }
 
+    fun deleteTodo(todoId: Int, todoName: String, todoIsDone: Boolean){
+        val deletedTodo = deleteTodoEntry(todoId, todoName, todoIsDone)
+        deleteTodo(deletedTodo)
+    }
+
     private fun newTodoEntry(todoName: String) : Todo{
         return Todo(name = todoName, isDone = false)
     }
 
     private fun updateTodoEntry(todoId: Int, todoName: String, todoIsDone: Boolean) : Todo{
+        return Todo(id = todoId, name = todoName, isDone = todoIsDone)
+    }
+
+    private fun deleteTodoEntry(todoId: Int, todoName: String, todoIsDone: Boolean) : Todo{
         return Todo(id = todoId, name = todoName, isDone = todoIsDone)
     }
 
@@ -40,7 +49,7 @@ class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
         }
     }
 
-    fun deleteTodo(todo: Todo){
+    private fun deleteTodo(todo: Todo){
         viewModelScope.launch {
             TodoDao.deleteTodo(todo)
         }

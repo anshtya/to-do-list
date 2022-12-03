@@ -43,10 +43,8 @@ class TodoFragment : Fragment(), TodoOps {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
-        lifecycle.coroutineScope.launch(Dispatchers.IO) {
-            viewModel.allTodo.collect() {
-                adapter.submitList(it)
-            }
+        viewModel.allTodo.observe(this.viewLifecycleOwner) { todos ->
+            todos?.let { adapter.submitList(it) }
         }
 
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
@@ -61,8 +59,7 @@ class TodoFragment : Fragment(), TodoOps {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val currTodo = adapter.currentList[viewHolder.adapterPosition]
-                viewModel.deleteTodo(currTodo)
-                adapter.notifyItemChanged(viewHolder.adapterPosition)
+                viewModel.deleteTodo(currTodo.id, currTodo.name, currTodo.isDone)
             }
         }).attachToRecyclerView(listRecyclerView)
 
