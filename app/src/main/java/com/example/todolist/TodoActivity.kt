@@ -2,12 +2,11 @@ package com.example.todolist
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 
-class MainActivity : AppCompatActivity(R.layout.activity_main){
+class TodoActivity : AppCompatActivity(R.layout.activity_main){
 
     private lateinit var navController: NavController
 
