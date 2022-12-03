@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +10,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.TodoApplication
 import com.example.todolist.adapter.TodoAdapter
 import com.example.todolist.adapter.TodoOps
 import com.example.todolist.databinding.FragmentTodoBinding
