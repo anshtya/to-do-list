@@ -7,21 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.TodoApplication
 import com.example.todolist.adapter.TodoAdapter
-import com.example.todolist.adapter.TodoOps
+import com.example.todolist.adapter.TodoEvents
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.example.todolist.viewmodel.TodoViewModel
 import com.example.todolist.viewmodel.TodoViewModelFactory
 
-class TodoFragment : Fragment(), TodoOps {
+class TodoFragment : Fragment(), TodoEvents{
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var listRecyclerView: RecyclerView
-    private val adapter = TodoAdapter(this)
+    private lateinit var adapter: TodoAdapter
     private val viewModel: TodoViewModel by activityViewModels{
         TodoViewModelFactory(
             (activity?.application as TodoApplication).database
@@ -40,27 +39,10 @@ class TodoFragment : Fragment(), TodoOps {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
-        viewModel.allTodo.observe(this.viewLifecycleOwner) { todos ->
-            todos?.let { adapter.submitList(it) }
+        viewModel.allTodo.observe(this.viewLifecycleOwner) {
+            adapter.todoList = it
+            adapter.notifyDataSetChanged()
         }
-
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val currTodo = adapter.currentList[viewHolder.adapterPosition]
-                viewModel.deleteTodo(currTodo.id, currTodo.name, currTodo.isDone)
-                adapter.notifyItemChanged(viewHolder.adapterPosition)
-            }
-        }).attachToRecyclerView(listRecyclerView)
-
 
         binding.btnAddTodo.setOnClickListener {
             val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment()
@@ -69,6 +51,7 @@ class TodoFragment : Fragment(), TodoOps {
     }
 
     private fun setRecyclerView(){
+        adapter = TodoAdapter(listOf(),this)
         listRecyclerView = binding.listRecyclerView
         listRecyclerView.layoutManager = LinearLayoutManager(context)
         listRecyclerView.adapter = adapter
@@ -77,5 +60,8 @@ class TodoFragment : Fragment(), TodoOps {
 
     override fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean) {
         viewModel.updateTodo(todoId, todoName, todoIsDone)
+    }
+    override fun onTodoDelete(todoId: Int, todoName: String, todoIsDone: Boolean) {
+        viewModel.deleteTodo(todoId, todoName, todoIsDone)
     }
 }

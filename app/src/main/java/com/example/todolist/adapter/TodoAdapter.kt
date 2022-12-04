@@ -2,14 +2,13 @@ package com.example.todolist.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.fragments.TodoFragment
 import com.example.todolist.data.todo.Todo
 import com.example.todolist.databinding.TodoViewBinding
+import com.example.todolist.fragments.TodoFragment
 
-class TodoAdapter(private val listener: TodoFragment): ListAdapter<Todo, TodoAdapter.TodoViewHolder>(DiffCallback) {
+class TodoAdapter(var todoList: List<Todo> ,private val listener: TodoFragment):
+    RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
     init{
         setHasStableIds(true)
@@ -17,6 +16,7 @@ class TodoAdapter(private val listener: TodoFragment): ListAdapter<Todo, TodoAda
 
     class TodoViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
         val chkIsDone = binding.chkIsDone
+        val btnDelete = binding.btnDelete
         fun bind(todo: Todo){
             binding.tvTodo.text = todo.name
             chkIsDone.isChecked = todo.isDone
@@ -29,7 +29,7 @@ class TodoAdapter(private val listener: TodoFragment): ListAdapter<Todo, TodoAda
     }
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        val currTodo = getItem(position)
+        val currTodo = todoList[position]
         holder.apply{
             bind(currTodo)
             chkIsDone.setOnClickListener {
@@ -39,24 +39,20 @@ class TodoAdapter(private val listener: TodoFragment): ListAdapter<Todo, TodoAda
                     listener.onTodoUpdate(currTodo.id, currTodo.name, false)
                 }
             }
+            btnDelete.setOnClickListener {
+                listener.onTodoDelete(currTodo.id, currTodo.name, currTodo.isDone)
+            }
         }
+
     }
 
     override fun getItemId(position: Int): Long = position.toLong()
 
-    companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<Todo>() {
-            override fun areItemsTheSame(oldItem: Todo, newItem: Todo): Boolean {
-                return oldItem === newItem
-            }
-
-            override fun areContentsTheSame(oldItem: Todo, newItem: Todo): Boolean {
-                return oldItem.name == newItem.name
-            }
-        }
+    override fun getItemCount(): Int {
+        return todoList.size
     }
-
 }
-interface TodoOps{
+interface TodoEvents{
     fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean)
+    fun onTodoDelete(todoId: Int, todoName: String, todoIsDone: Boolean)
 }
