@@ -2,23 +2,38 @@ package com.example.todolist.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.data.todo.Todo
 import com.example.todolist.databinding.TodoViewBinding
 import com.example.todolist.fragments.TodoFragment
 
-class TodoAdapter(var todoList: List<Todo> ,private val listener: TodoFragment):
-    RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
+class TodoAdapter(private val listener: TodoFragment):
+    ListAdapter<Todo, TodoAdapter.TodoViewHolder>(DiffCallback) {
+
+    companion object {
+        private val DiffCallback = object : DiffUtil.ItemCallback<Todo>() {
+            override fun areItemsTheSame(oldItem: Todo, newItem: Todo): Boolean {
+                return oldItem === newItem
+            }
+
+            override fun areContentsTheSame(oldItem: Todo, newItem: Todo): Boolean {
+                return oldItem.name == newItem.name
+            }
+        }
+    }
 
     init{
         setHasStableIds(true)
     }
 
-    class TodoViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
+    class TodoViewHolder(binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
+        val tvTodo = binding.tvTodo
         val chkIsDone = binding.chkIsDone
         val btnDelete = binding.btnDelete
         fun bind(todo: Todo){
-            binding.tvTodo.text = todo.name
+            tvTodo.text = todo.name
             chkIsDone.isChecked = todo.isDone
         }
     }
@@ -29,7 +44,7 @@ class TodoAdapter(var todoList: List<Todo> ,private val listener: TodoFragment):
     }
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        val currTodo = todoList[position]
+        val currTodo = getItem(position)
         holder.apply{
             bind(currTodo)
             chkIsDone.setOnClickListener {
@@ -40,7 +55,10 @@ class TodoAdapter(var todoList: List<Todo> ,private val listener: TodoFragment):
                 }
             }
             btnDelete.setOnClickListener {
-                listener.onTodoDelete(currTodo.id, currTodo.name, currTodo.isDone)
+                listener.onTodoDelete(currTodo)
+            }
+            tvTodo.setOnClickListener {
+                listener.onTodoEdit(currTodo)
             }
         }
 
@@ -48,11 +66,9 @@ class TodoAdapter(var todoList: List<Todo> ,private val listener: TodoFragment):
 
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun getItemCount(): Int {
-        return todoList.size
-    }
 }
 interface TodoEvents{
     fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean)
-    fun onTodoDelete(todoId: Int, todoName: String, todoIsDone: Boolean)
+    fun onTodoDelete(todo: Todo)
+    fun onTodoEdit(todo: Todo)
 }

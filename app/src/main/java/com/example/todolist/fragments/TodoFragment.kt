@@ -9,9 +9,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.R
 import com.example.todolist.TodoApplication
 import com.example.todolist.adapter.TodoAdapter
 import com.example.todolist.adapter.TodoEvents
+import com.example.todolist.data.todo.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.example.todolist.viewmodel.TodoViewModel
 import com.example.todolist.viewmodel.TodoViewModelFactory
@@ -39,19 +41,20 @@ class TodoFragment : Fragment(), TodoEvents{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
-        viewModel.allTodo.observe(this.viewLifecycleOwner) {
-            adapter.todoList = it
-            adapter.notifyDataSetChanged()
+        viewModel.allTodo.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
         }
 
         binding.btnAddTodo.setOnClickListener {
-            val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment()
+            val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
+                getString(R.string.add)
+            )
             findNavController().navigate(action)
         }
     }
 
     private fun setRecyclerView(){
-        adapter = TodoAdapter(listOf(),this)
+        adapter = TodoAdapter(this)
         listRecyclerView = binding.listRecyclerView
         listRecyclerView.layoutManager = LinearLayoutManager(context)
         listRecyclerView.adapter = adapter
@@ -61,7 +64,15 @@ class TodoFragment : Fragment(), TodoEvents{
     override fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean) {
         viewModel.updateTodo(todoId, todoName, todoIsDone)
     }
-    override fun onTodoDelete(todoId: Int, todoName: String, todoIsDone: Boolean) {
-        viewModel.deleteTodo(todoId, todoName, todoIsDone)
+    override fun onTodoDelete(todo: Todo) {
+        viewModel.deleteTodo(todo)
+    }
+
+    override fun onTodoEdit(todo: Todo) {
+        val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
+            getString(R.string.edit),
+            todo.id
+        )
+        findNavController().navigate(action)
     }
 }
