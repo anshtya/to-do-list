@@ -12,17 +12,27 @@
         tools:layout="@layout/fragment_todo">
         <action
             android:id="@+id/action_todoFragment_to_todoAddFragment"
-            app:destination="@id/todoAddFragment" />
+            app:destination="@id/todoAddFragment" >
+            <argument
+                android:name="todo_id"
+                android:defaultValue="-1" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/todoAddFragment"
         android:name="com.example.todolist.fragments.TodoAddFragment"
-        android:label="Add Todo"
+        android:label="{title}"
         tools:layout="@layout/fragment_todo_add">
         <action
             android:id="@+id/action_todoAddFragment_to_todoFragment"
             app:destination="@id/todoFragment"
             app:popUpTo="@id/todoFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="todo_id"
+            app:argType="integer" />
+        <argument
+            android:name="title"
+            app:argType="string" />
     </fragment>
 </navigation>
