@@ -24,6 +24,9 @@ class TodoAdapter(private val listener: TodoFragment):
         }
     }
 
+    /**
+     * Prevents triggering of checkbox in other items
+     */
     init{
         setHasStableIds(true)
     }
@@ -31,7 +34,6 @@ class TodoAdapter(private val listener: TodoFragment):
     class TodoViewHolder(binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
         val tvTodo = binding.tvTodo
         val chkIsDone = binding.chkIsDone
-        val btnDelete = binding.btnDelete
         fun bind(todo: Todo){
             tvTodo.text = todo.name
             chkIsDone.isChecked = todo.isDone
@@ -54,11 +56,9 @@ class TodoAdapter(private val listener: TodoFragment):
                     listener.onTodoUpdate(currTodo.id, currTodo.name, false)
                 }
             }
-            btnDelete.setOnClickListener {
-                listener.onTodoDelete(currTodo)
-            }
-            tvTodo.setOnClickListener {
-                listener.onTodoEdit(currTodo)
+            tvTodo.setOnLongClickListener {
+                listener.callTodoDialog(position)
+                true
             }
         }
 
@@ -69,6 +69,5 @@ class TodoAdapter(private val listener: TodoFragment):
 }
 interface TodoEvents{
     fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean)
-    fun onTodoDelete(todo: Todo)
-    fun onTodoEdit(todo: Todo)
+    fun callTodoDialog(position: Int)
 }

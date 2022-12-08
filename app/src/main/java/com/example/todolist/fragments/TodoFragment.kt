@@ -17,6 +17,7 @@ import com.example.todolist.data.todo.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.example.todolist.viewmodel.TodoViewModel
 import com.example.todolist.viewmodel.TodoViewModelFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class TodoFragment : Fragment(), TodoEvents{
 
@@ -53,6 +54,19 @@ class TodoFragment : Fragment(), TodoEvents{
         }
     }
 
+    private fun showTodoDialog(todo: Todo) {
+        val options = arrayOf("Edit","Delete")
+        MaterialAlertDialogBuilder(requireContext())
+            .setCancelable(true)
+            .setItems(options){ _,which ->
+                when(options[which]){
+                    "Edit" -> onTodoEdit(todo.id)
+                    "Delete" -> viewModel.deleteTodo(todo)
+                }
+            }
+            .show()
+    }
+
     private fun setRecyclerView(){
         adapter = TodoAdapter(this)
         listRecyclerView = binding.listRecyclerView
@@ -61,18 +75,19 @@ class TodoFragment : Fragment(), TodoEvents{
         listRecyclerView.setHasFixedSize(true)
     }
 
+    private fun onTodoEdit(todoId: Int) {
+        val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
+            getString(R.string.edit),
+            todoId
+        )
+        findNavController().navigate(action)
+    }
+
     override fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean) {
         viewModel.updateTodo(todoId, todoName, todoIsDone)
     }
-    override fun onTodoDelete(todo: Todo) {
-        viewModel.deleteTodo(todo)
-    }
-
-    override fun onTodoEdit(todo: Todo) {
-        val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
-            getString(R.string.edit),
-            todo.id
-        )
-        findNavController().navigate(action)
+    override fun callTodoDialog(position: Int) {
+        val todo = adapter.currentList[position]
+        showTodoDialog(todo)
     }
 }
