@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 class TodoViewModel(private val repository: TodoRepository): ViewModel() {
 
-    val allTodo: LiveData<List<Todo>> = repository.getAllTodos().asLiveData()
+    fun todos() = repository.getAllTodos().asLiveData()
 
     fun insertTodo(todo: String){
         val newTodo = newTodoEntry(todo)

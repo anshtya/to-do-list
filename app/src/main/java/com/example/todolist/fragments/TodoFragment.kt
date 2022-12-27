@@ -46,7 +46,7 @@ class TodoFragment : Fragment(), TodoEvents{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
-        viewModel.allTodo.observe(viewLifecycleOwner) {
+        viewModel.todos().observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 
