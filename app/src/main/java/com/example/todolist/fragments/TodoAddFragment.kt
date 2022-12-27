@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.todolist.TodoApplication
 import com.example.todolist.data.todo.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
+import com.example.todolist.repository.TodoRepository
 import com.example.todolist.viewmodel.TodoViewModel
 import com.example.todolist.viewmodel.TodoViewModelFactory
 
@@ -19,8 +20,9 @@ class TodoAddFragment : Fragment() {
     private lateinit var binding: FragmentTodoAddBinding
     private val viewModel: TodoViewModel by activityViewModels{
         TodoViewModelFactory(
-            (activity?.application as TodoApplication).database
-                .todoDao()
+            TodoRepository(
+                (activity?.application as TodoApplication).database.todoDao()
+            )
         )
     }
 

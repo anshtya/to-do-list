@@ -2,12 +2,12 @@ package com.example.todolist.viewmodel
 
 import androidx.lifecycle.*
 import com.example.todolist.data.todo.Todo
-import com.example.todolist.data.todo.TodoDao
+import com.example.todolist.repository.TodoRepository
 import kotlinx.coroutines.launch
 
-class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
+class TodoViewModel(private val repository: TodoRepository): ViewModel() {
 
-    val allTodo: LiveData<List<Todo>> = TodoDao.getAll().asLiveData()
+    val allTodo: LiveData<List<Todo>> = repository.getAllTodos().asLiveData()
 
     fun insertTodo(todo: String){
         val newTodo = newTodoEntry(todo)
@@ -24,11 +24,11 @@ class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
     }
 
     fun getTodo(id: Int): LiveData<Todo>{
-        return TodoDao.getTodo(id).asLiveData()
+        return repository.getTodo(id).asLiveData()
     }
 
     private fun newTodoEntry(todoName: String) : Todo{
-        return Todo(name = todoName, isDone = false)
+        return Todo(name = todoName)
     }
 
     private fun updateTodoEntry(todoId: Int, todoName: String, todoIsDone: Boolean) : Todo{
@@ -37,19 +37,19 @@ class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
 
     private fun insertTodo(todo: Todo){
         viewModelScope.launch {
-            TodoDao.insertTodo(todo)
+            repository.insert(todo)
         }
     }
 
     private fun updateTodo(todo: Todo){
         viewModelScope.launch {
-            TodoDao.updateTodo(todo)
+            repository.update(todo)
         }
     }
 
     private fun daoDeleteTodo(todo: Todo){
         viewModelScope.launch {
-            TodoDao.deleteTodo(todo)
+            repository.delete(todo)
         }
     }
 }
@@ -57,11 +57,11 @@ class TodoViewModel(private val TodoDao: TodoDao): ViewModel() {
 /**
  * Factory class to instantiate the [ViewModel] instance.
  */
-class TodoViewModelFactory(private val TodoDao: TodoDao) : ViewModelProvider.Factory {
+class TodoViewModelFactory(private val repository: TodoRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TodoViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TodoViewModel(TodoDao) as T
+            return TodoViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
