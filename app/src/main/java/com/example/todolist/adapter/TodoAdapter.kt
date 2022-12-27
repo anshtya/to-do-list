@@ -15,28 +15,33 @@ class TodoAdapter(private val listener: TodoFragment):
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<Todo>() {
             override fun areItemsTheSame(oldItem: Todo, newItem: Todo): Boolean {
-                return oldItem === newItem
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: Todo, newItem: Todo): Boolean {
-                return oldItem.name == newItem.name
+                return oldItem == newItem
             }
         }
     }
 
-    /**
-     * Prevents triggering of checkbox in other items
-     */
-    init{
-        setHasStableIds(true)
-    }
+    inner class TodoViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    class TodoViewHolder(binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
-        val tvTodo = binding.tvTodo
-        val chkIsDone = binding.chkIsDone
         fun bind(todo: Todo){
-            tvTodo.text = todo.name
-            chkIsDone.isChecked = todo.isDone
+            binding.apply {
+                tvTodo.text = todo.name
+                chkIsDone.isChecked = todo.isDone
+                chkIsDone.setOnClickListener {
+                    if (chkIsDone.isChecked) {
+                        listener.onTodoUpdate(todo.id, todo.name, true )
+                    } else {
+                        listener.onTodoUpdate(todo.id, todo.name, false)
+                    }
+                }
+                root.rootView.setOnLongClickListener {
+                    listener.callTodoDialog(todo)
+                    true
+                }
+            }
         }
     }
 
@@ -47,27 +52,10 @@ class TodoAdapter(private val listener: TodoFragment):
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val currTodo = getItem(position)
-        holder.apply{
-            bind(currTodo)
-            chkIsDone.setOnClickListener {
-                if (chkIsDone.isChecked) {
-                    listener.onTodoUpdate(currTodo.id, currTodo.name, true )
-                } else {
-                    listener.onTodoUpdate(currTodo.id, currTodo.name, false)
-                }
-            }
-            tvTodo.setOnLongClickListener {
-                listener.callTodoDialog(position)
-                true
-            }
-        }
-
+        holder.bind(currTodo)
     }
-
-    override fun getItemId(position: Int): Long = position.toLong()
-
 }
 interface TodoEvents{
     fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean)
-    fun callTodoDialog(position: Int)
+    fun callTodoDialog(todo: Todo)
 }

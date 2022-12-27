@@ -51,7 +51,7 @@ class TodoFragment : Fragment(), TodoEvents{
         }
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
             override fun onMove(
@@ -106,6 +106,7 @@ class TodoFragment : Fragment(), TodoEvents{
         listRecyclerView.apply{
             adapter = todoAdapter
             layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
         }
     }
 
@@ -120,8 +121,7 @@ class TodoFragment : Fragment(), TodoEvents{
     override fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean) {
         viewModel.updateTodo(todoId, todoName, todoIsDone)
     }
-    override fun callTodoDialog(position: Int) {
-        val todo = todoAdapter.currentList[position]
+    override fun callTodoDialog(todo: Todo) {
         showTodoDialog(todo)
     }
 }

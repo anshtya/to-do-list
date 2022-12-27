@@ -1,12 +1,12 @@
 package com.example.todolist.data.todo
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoDao {
@@ -21,8 +21,8 @@ interface TodoDao {
     suspend fun updateTodo(todo: Todo)
 
     @Query("SELECT * FROM todo")
-    fun getAll(): LiveData<List<Todo>>
+    fun getAll(): Flow<List<Todo>>
 
     @Query("SELECT * from todo WHERE id = :id")
-    fun getTodo(id: Int): LiveData<Todo>
+    fun getTodo(id: Int): Flow<Todo>
 }
