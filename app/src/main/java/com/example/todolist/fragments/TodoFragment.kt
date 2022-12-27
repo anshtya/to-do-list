@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
@@ -15,19 +16,22 @@ import com.example.todolist.adapter.TodoAdapter
 import com.example.todolist.adapter.TodoEvents
 import com.example.todolist.data.todo.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
+import com.example.todolist.repository.TodoRepository
 import com.example.todolist.viewmodel.TodoViewModel
 import com.example.todolist.viewmodel.TodoViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 
 class TodoFragment : Fragment(), TodoEvents{
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var listRecyclerView: RecyclerView
-    private lateinit var adapter: TodoAdapter
+    private lateinit var todoAdapter: TodoAdapter
     private val viewModel: TodoViewModel by activityViewModels{
         TodoViewModelFactory(
-            (activity?.application as TodoApplication).database
-                .todoDao()
+            TodoRepository(
+                (activity?.application as TodoApplication).database.todoDao()
+            )
         )
     }
 
@@ -42,8 +46,37 @@ class TodoFragment : Fragment(), TodoEvents{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
-        viewModel.allTodo.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        viewModel.todos().observe(viewLifecycleOwner) {
+            todoAdapter.submitList(it)
+        }
+
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val currTodo = todoAdapter.currentList[position]
+                viewModel.deleteTodo(currTodo)
+                Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
+                    setAction("Undo"){
+                        viewModel.insertTodo(currTodo.name)
+                    }
+                    show()
+                }
+            }
+        }
+
+        ItemTouchHelper(itemTouchHelperCallback).apply {
+            attachToRecyclerView(listRecyclerView)
         }
 
         binding.btnAddTodo.setOnClickListener {
@@ -68,11 +101,13 @@ class TodoFragment : Fragment(), TodoEvents{
     }
 
     private fun setRecyclerView(){
-        adapter = TodoAdapter(this)
+        todoAdapter = TodoAdapter(this)
         listRecyclerView = binding.listRecyclerView
-        listRecyclerView.layoutManager = LinearLayoutManager(context)
-        listRecyclerView.adapter = adapter
-        listRecyclerView.setHasFixedSize(true)
+        listRecyclerView.apply{
+            adapter = todoAdapter
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+        }
     }
 
     private fun onTodoEdit(todoId: Int) {
@@ -86,8 +121,7 @@ class TodoFragment : Fragment(), TodoEvents{
     override fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean) {
         viewModel.updateTodo(todoId, todoName, todoIsDone)
     }
-    override fun callTodoDialog(position: Int) {
-        val todo = adapter.currentList[position]
+    override fun callTodoDialog(todo: Todo) {
         showTodoDialog(todo)
     }
 }
