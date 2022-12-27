@@ -26,7 +26,7 @@ class TodoFragment : Fragment(), TodoEvents{
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var listRecyclerView: RecyclerView
-    private lateinit var adapter: TodoAdapter
+    private lateinit var todoAdapter: TodoAdapter
     private val viewModel: TodoViewModel by activityViewModels{
         TodoViewModelFactory(
             TodoRepository(
@@ -47,7 +47,7 @@ class TodoFragment : Fragment(), TodoEvents{
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
         viewModel.todos().observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+            todoAdapter.submitList(it)
         }
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
@@ -64,7 +64,7 @@ class TodoFragment : Fragment(), TodoEvents{
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val currTodo = adapter.currentList[position]
+                val currTodo = todoAdapter.currentList[position]
                 viewModel.deleteTodo(currTodo)
                 Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
                     setAction("Undo"){
@@ -101,10 +101,12 @@ class TodoFragment : Fragment(), TodoEvents{
     }
 
     private fun setRecyclerView(){
-        adapter = TodoAdapter(this)
+        todoAdapter = TodoAdapter(this)
         listRecyclerView = binding.listRecyclerView
-        listRecyclerView.layoutManager = LinearLayoutManager(context)
-        listRecyclerView.adapter = adapter
+        listRecyclerView.apply{
+            adapter = todoAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     private fun onTodoEdit(todoId: Int) {
@@ -119,7 +121,7 @@ class TodoFragment : Fragment(), TodoEvents{
         viewModel.updateTodo(todoId, todoName, todoIsDone)
     }
     override fun callTodoDialog(position: Int) {
-        val todo = adapter.currentList[position]
+        val todo = todoAdapter.currentList[position]
         showTodoDialog(todo)
     }
 }
