@@ -55,8 +55,10 @@ class TodoAddFragment : Fragment() {
         if (isEmpty()) {
             binding.txtEnterTodo.text = null
         } else {
-            val todo = binding.txtEnterTodo.text.toString()
-            viewModel.insertTodo(todo)
+            val todoName = binding.txtEnterTodo.text.toString()
+            viewModel.insertTodo(Todo(
+                name = todoName
+            ))
             binding.txtEnterTodo.text = null
             findNavController().navigateUp()
         }
@@ -65,11 +67,11 @@ class TodoAddFragment : Fragment() {
     private fun bind(todo: Todo) {
         binding.apply {
             txtEnterTodo.setText(todo.name)
-            btnSaveTodo.setOnClickListener { viewModel.updateTodo(
-                todo.id,
-                todoName = txtEnterTodo.text.toString(),
-                todo.isDone
-            )
+            btnSaveTodo.setOnClickListener { viewModel.updateTodo(Todo(
+                id = todo.id,
+                name = txtEnterTodo.text.toString(),
+                isDone = todo.isDone
+            ))
                 val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
                 findNavController().navigate(action)
             }

@@ -68,7 +68,8 @@ class TodoFragment : Fragment(), TodoEvents{
                 viewModel.deleteTodo(currTodo)
                 Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
                     setAction("Undo"){
-                        viewModel.insertTodo(currTodo.name)
+                        val undoTodo = Todo(id = currTodo.id, name = currTodo.name)
+                        viewModel.insertTodo(undoTodo)
                     }
                     show()
                 }
@@ -118,8 +119,8 @@ class TodoFragment : Fragment(), TodoEvents{
         findNavController().navigate(action)
     }
 
-    override fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean) {
-        viewModel.updateTodo(todoId, todoName, todoIsDone)
+    override fun onTodoUpdate(todo: Todo) {
+        viewModel.updateTodo(todo)
     }
     override fun callTodoDialog(todo: Todo) {
         showTodoDialog(todo)
