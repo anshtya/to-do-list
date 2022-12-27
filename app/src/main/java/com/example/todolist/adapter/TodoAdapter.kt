@@ -32,9 +32,17 @@ class TodoAdapter(private val listener: TodoFragment):
                 chkIsDone.isChecked = todo.isDone
                 chkIsDone.setOnClickListener {
                     if (chkIsDone.isChecked) {
-                        listener.onTodoUpdate(todo.id, todo.name, true )
+                        listener.onTodoUpdate(Todo(
+                            id = todo.id,
+                            name = todo.name,
+                            isDone = true
+                        ))
                     } else {
-                        listener.onTodoUpdate(todo.id, todo.name, false)
+                        listener.onTodoUpdate(Todo(
+                            id = todo.id,
+                            name = todo.name,
+                            isDone = false
+                        ))
                     }
                 }
                 root.rootView.setOnLongClickListener {
@@ -56,6 +64,6 @@ class TodoAdapter(private val listener: TodoFragment):
     }
 }
 interface TodoEvents{
-    fun onTodoUpdate(todoId: Int, todoName: String, todoIsDone: Boolean)
+    fun onTodoUpdate(todo: Todo)
     fun callTodoDialog(todo: Todo)
 }

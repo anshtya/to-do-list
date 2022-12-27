@@ -13,16 +13,14 @@ class TodoViewModel(private val repository: TodoRepository): ViewModel() {
         return repository.getTodo(id).asLiveData()
     }
 
-    fun insertTodo(todoName: String){
+    fun insertTodo(newTodo: Todo){
         viewModelScope.launch {
-            val newTodo = Todo(name = todoName)
             repository.insert(newTodo)
         }
     }
 
-    fun updateTodo(todoId: Int, todoName: String, todoIsDone: Boolean){
+    fun updateTodo(updatedTodo: Todo){
         viewModelScope.launch {
-            val updatedTodo = Todo(id = todoId, name = todoName, isDone = todoIsDone)
             repository.update(updatedTodo)
         }
     }
