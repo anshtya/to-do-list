@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.data.todo.Todo
+import com.example.todolist.data.entity.Todo
 import com.example.todolist.databinding.TodoViewBinding
 import com.example.todolist.fragments.TodoFragment
 
@@ -32,17 +32,21 @@ class TodoAdapter(private val listener: TodoFragment):
                 chkIsDone.isChecked = todo.isDone
                 chkIsDone.setOnClickListener {
                     if (chkIsDone.isChecked) {
-                        listener.onTodoUpdate(Todo(
+                        listener.onTodoUpdate(
+                            Todo(
                             id = todo.id,
                             name = todo.name,
                             isDone = true
-                        ))
+                        )
+                        )
                     } else {
-                        listener.onTodoUpdate(Todo(
+                        listener.onTodoUpdate(
+                            Todo(
                             id = todo.id,
                             name = todo.name,
                             isDone = false
-                        ))
+                        )
+                        )
                     }
                 }
                 root.rootView.setOnLongClickListener {

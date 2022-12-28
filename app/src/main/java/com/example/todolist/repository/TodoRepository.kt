@@ -1,7 +1,7 @@
 package com.example.todolist.repository
 
-import com.example.todolist.data.todo.Todo
-import com.example.todolist.data.todo.TodoDao
+import com.example.todolist.data.entity.Todo
+import com.example.todolist.data.dao.TodoDao
 
 class TodoRepository(
     private val dao: TodoDao
