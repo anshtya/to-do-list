@@ -1,7 +1,7 @@
 package com.example.todolist.viewmodel
 
 import androidx.lifecycle.*
-import com.example.todolist.data.todo.Todo
+import com.example.todolist.data.entity.Todo
 import com.example.todolist.repository.TodoRepository
 import kotlinx.coroutines.launch
 

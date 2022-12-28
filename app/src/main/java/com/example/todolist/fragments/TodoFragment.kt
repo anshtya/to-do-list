@@ -14,7 +14,7 @@ import com.example.todolist.R
 import com.example.todolist.TodoApplication
 import com.example.todolist.adapter.TodoAdapter
 import com.example.todolist.adapter.TodoEvents
-import com.example.todolist.data.todo.Todo
+import com.example.todolist.data.entity.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.example.todolist.repository.TodoRepository
 import com.example.todolist.viewmodel.TodoViewModel

@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todolist.TodoApplication
-import com.example.todolist.data.todo.Todo
+import com.example.todolist.data.entity.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
 import com.example.todolist.repository.TodoRepository
 import com.example.todolist.viewmodel.TodoViewModel
@@ -56,9 +56,11 @@ class TodoAddFragment : Fragment() {
             binding.txtEnterTodo.text = null
         } else {
             val todoName = binding.txtEnterTodo.text.toString()
-            viewModel.insertTodo(Todo(
+            viewModel.insertTodo(
+                Todo(
                 name = todoName
-            ))
+            )
+            )
             binding.txtEnterTodo.text = null
             findNavController().navigateUp()
         }
@@ -67,11 +69,13 @@ class TodoAddFragment : Fragment() {
     private fun bind(todo: Todo) {
         binding.apply {
             txtEnterTodo.setText(todo.name)
-            btnSaveTodo.setOnClickListener { viewModel.updateTodo(Todo(
+            btnSaveTodo.setOnClickListener { viewModel.updateTodo(
+                Todo(
                 id = todo.id,
                 name = txtEnterTodo.text.toString(),
                 isDone = todo.isDone
-            ))
+            )
+            )
                 val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
                 findNavController().navigate(action)
             }
