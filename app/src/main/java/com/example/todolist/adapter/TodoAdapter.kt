@@ -26,33 +26,46 @@ class TodoAdapter(private val listener: TodoFragment):
 
     inner class TodoViewHolder(private val binding: TodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        private var currTodo: Todo? = null
+
+        init{
+            binding.apply{
+                chkIsDone.setOnClickListener {
+                    currTodo?.let { todo ->
+                        if (chkIsDone.isChecked) {
+                            listener.onTodoUpdate(
+                                Todo(
+                                    id = todo.id,
+                                    name = todo.name,
+                                    isDone = true
+                                )
+                            )
+                        } else {
+                            listener.onTodoUpdate(
+                                Todo(
+                                    id = todo.id,
+                                    name = todo.name,
+                                    isDone = false
+                                )
+                            )
+                        }
+                    }
+
+                }
+                root.rootView.setOnLongClickListener {
+                    currTodo?.let { todo ->
+                        listener.callTodoDialog(todo)
+                    }
+                    true
+                }
+            }
+        }
+
         fun bind(todo: Todo){
+            currTodo = todo
             binding.apply {
                 tvTodo.text = todo.name
                 chkIsDone.isChecked = todo.isDone
-                chkIsDone.setOnClickListener {
-                    if (chkIsDone.isChecked) {
-                        listener.onTodoUpdate(
-                            Todo(
-                            id = todo.id,
-                            name = todo.name,
-                            isDone = true
-                        )
-                        )
-                    } else {
-                        listener.onTodoUpdate(
-                            Todo(
-                            id = todo.id,
-                            name = todo.name,
-                            isDone = false
-                        )
-                        )
-                    }
-                }
-                root.rootView.setOnLongClickListener {
-                    listener.callTodoDialog(todo)
-                    true
-                }
             }
         }
     }

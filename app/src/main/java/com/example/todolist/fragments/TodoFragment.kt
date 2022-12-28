@@ -68,8 +68,7 @@ class TodoFragment : Fragment(), TodoEvents{
                 viewModel.deleteTodo(currTodo)
                 Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
                     setAction("Undo"){
-                        val undoTodo = Todo(id = currTodo.id, name = currTodo.name)
-                        viewModel.insertTodo(undoTodo)
+                        viewModel.insertTodo(currTodo)
                     }
                     show()
                 }
