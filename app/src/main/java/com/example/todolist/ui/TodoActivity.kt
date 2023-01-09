@@ -1,10 +1,11 @@
-package com.example.todolist
+package com.example.todolist.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.todolist.R
 
 class TodoActivity : AppCompatActivity(R.layout.activity_main){
 
