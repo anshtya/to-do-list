@@ -1,4 +1,4 @@
-package com.example.todolist.fragments
+package com.example.todolist.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,17 +12,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.TodoApplication
-import com.example.todolist.adapter.TodoAdapter
-import com.example.todolist.adapter.TodoEvents
+import com.example.todolist.ui.adapter.TodoAdapter
+import com.example.todolist.ui.adapter.TodoEvents
 import com.example.todolist.data.entity.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
-import com.example.todolist.repository.TodoRepository
+import com.example.todolist.data.repository.TodoRepository
 import com.example.todolist.viewmodel.TodoViewModel
 import com.example.todolist.viewmodel.TodoViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
-class TodoFragment : Fragment(), TodoEvents{
+class TodoFragment : Fragment(), TodoEvents {
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var listRecyclerView: RecyclerView

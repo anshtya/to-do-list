@@ -1,4 +1,4 @@
-package com.example.todolist.fragments
+package com.example.todolist.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.todolist.TodoApplication
 import com.example.todolist.data.entity.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
-import com.example.todolist.repository.TodoRepository
+import com.example.todolist.data.repository.TodoRepository
 import com.example.todolist.viewmodel.TodoViewModel
 import com.example.todolist.viewmodel.TodoViewModelFactory
 
