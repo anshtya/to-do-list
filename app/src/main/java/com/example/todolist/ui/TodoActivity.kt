@@ -6,7 +6,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.todolist.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TodoActivity : AppCompatActivity(R.layout.activity_main){
 
     private lateinit var navController: NavController
