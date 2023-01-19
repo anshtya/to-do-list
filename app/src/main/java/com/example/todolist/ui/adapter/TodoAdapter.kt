@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.data.entity.Todo
+import com.example.todolist.data.local.Todo
 import com.example.todolist.databinding.TodoViewBinding
 import com.example.todolist.ui.fragments.TodoFragment
 

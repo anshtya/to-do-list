@@ -6,25 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.todolist.TodoApplication
-import com.example.todolist.data.entity.Todo
+import com.example.todolist.data.local.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
-import com.example.todolist.data.repository.TodoRepository
-import com.example.todolist.viewmodel.TodoViewModel
-import com.example.todolist.viewmodel.TodoViewModelFactory
+import com.example.todolist.ui.viewmodel.TodoViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class TodoAddFragment : Fragment() {
 
     private lateinit var binding: FragmentTodoAddBinding
-    private val viewModel: TodoViewModel by activityViewModels{
-        TodoViewModelFactory(
-            TodoRepository(
-                (activity?.application as TodoApplication).database.todoDao()
-            )
-        )
-    }
+    private val viewModel: TodoViewModel by activityViewModels()
 
     private val navigationArgs: TodoAddFragmentArgs by navArgs()
 
@@ -41,8 +38,12 @@ class TodoAddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val id = navigationArgs.todoId
         if(id > 0){
-            viewModel.getTodo(id).observe(viewLifecycleOwner){
-                bind(it)
+            viewLifecycleOwner.lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.getTodo(id).collect {
+                        bind(it)
+                    }
+                }
             }
         } else {
             binding.btnSaveTodo.setOnClickListener {

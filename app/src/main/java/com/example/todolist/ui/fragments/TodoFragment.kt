@@ -6,34 +6,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.TodoApplication
+import com.example.todolist.data.local.Todo
+import com.example.todolist.databinding.FragmentTodoBinding
 import com.example.todolist.ui.adapter.TodoAdapter
 import com.example.todolist.ui.adapter.TodoEvents
-import com.example.todolist.data.entity.Todo
-import com.example.todolist.databinding.FragmentTodoBinding
-import com.example.todolist.data.repository.TodoRepository
-import com.example.todolist.viewmodel.TodoViewModel
-import com.example.todolist.viewmodel.TodoViewModelFactory
+import com.example.todolist.ui.viewmodel.TodoViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class TodoFragment : Fragment(), TodoEvents {
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var listRecyclerView: RecyclerView
     private lateinit var todoAdapter: TodoAdapter
-    private val viewModel: TodoViewModel by activityViewModels{
-        TodoViewModelFactory(
-            TodoRepository(
-                (activity?.application as TodoApplication).database.todoDao()
-            )
-        )
-    }
+    private val viewModel: TodoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,8 +43,13 @@ class TodoFragment : Fragment(), TodoEvents {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
-        viewModel.todos().observe(viewLifecycleOwner) {
-            todoAdapter.submitList(it)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.allTodos.collect {
+                    todoAdapter.submitList(it)
+                }
+            }
         }
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
