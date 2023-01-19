@@ -1,7 +1,12 @@
 # To-Do List
-<p>A simple app to record your daily tasks</p>
-<p>Made using MVVM, Room and Coroutines</p>
+A simple app to record your daily tasks
 
-# Demo
-https://user-images.githubusercontent.com/95761927/206489217-cadcbb12-cf1a-4f67-a618-2479c1989ca1.mp4
 
+## 📸 Screenshots
+
+<table>
+    <tr>
+      <td><img src="https://user-images.githubusercontent.com/95761927/213445103-66509365-1ea4-4955-ae01-5290a4bdc90f.jpg" width=250 height=500></td>
+      <td><img src="https://user-images.githubusercontent.com/95761927/213445116-86362a67-7b80-449f-89d4-a67ac0a259a0.jpg" width=250 height=500></td>
+    </tr>
+</table>
