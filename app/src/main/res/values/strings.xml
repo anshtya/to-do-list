@@ -4,4 +4,7 @@
     <string name="enter_a_task">Enter a task</string>
     <string name = "add">Add Task</string>
     <string name = "edit">Edit Task</string>
+    <string name="to_do_list">To-Do List</string>
+    <string name="add_todo">Add Todo</string>
+    <string name="add_to_do">Add To-Do</string>
 </resources>

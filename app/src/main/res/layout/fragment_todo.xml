@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.TodoFragment">
 
+    <TextView
+        android:id="@+id/titleText"
+        style="@style/Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/to_do_list"
+        app:layout_constraintBottom_toTopOf="@+id/listRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.018"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listRecyclerView"
         android:layout_width="0dp"
@@ -14,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
         tools:listitem="@layout/todo_view">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -25,9 +40,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:src="@android:drawable/ic_input_add"
+        android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
+        android:contentDescription="@string/add_todo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
