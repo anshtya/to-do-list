@@ -1,15 +1,14 @@
-package com.example.todolist.ui
+package com.example.todolist.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.todolist.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TodoActivity : AppCompatActivity(R.layout.activity_main){
+class AuthActivity : AppCompatActivity(R.layout.activity_auth) {
 
     private lateinit var navController: NavController
 
@@ -18,10 +17,9 @@ class TodoActivity : AppCompatActivity(R.layout.activity_main){
         supportActionBar?.hide()
 
         val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            .findFragmentById(R.id.auth_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        setupActionBarWithNavController(navController)
     }
 
 }

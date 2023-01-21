@@ -2,9 +2,15 @@
     <string name="app_name">To Do List</string>
     <string name="save">Save</string>
     <string name="enter_a_task">Enter a task</string>
-    <string name = "add">Add Task</string>
-    <string name = "edit">Edit Task</string>
+    <string name="add">Add Task</string>
+    <string name="edit">Edit Task</string>
     <string name="to_do_list">To-Do List</string>
     <string name="add_todo">Add Todo</string>
     <string name="add_to_do">Add To-Do</string>
+    <string name="logInText">Welcome</string>
+    <string name="emailText">Email</string>
+    <string name="passwordText">Password</string>
+    <string name="loginBtnText">Login</string>
+    <string name="noAccountText">Don\'t have an account?</string>
+    <string name="signUpText">Sign Up</string>
 </resources>
