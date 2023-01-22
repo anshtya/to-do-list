@@ -1,5 +1,6 @@
 package com.example.todolist.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.todolist.databinding.FragmentSignUpBinding
+import com.example.todolist.ui.home.TodoActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,6 +38,10 @@ class SignUpFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 viewModel.userAuthorized.collect { currentUser ->
                     when(currentUser){
+                        is Resource.Success -> {
+                            startActivity(Intent(context, TodoActivity::class.java))
+                            requireActivity().finish()
+                        }
                         is Resource.Error -> {
                             Snackbar.make(view, "${currentUser.message}", Snackbar.LENGTH_SHORT).show()
                         }
