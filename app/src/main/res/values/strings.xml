@@ -13,4 +13,9 @@
     <string name="loginBtnText">Login</string>
     <string name="noAccountText">Don\'t have an account?</string>
     <string name="signUpText">Sign Up</string>
+    <string name="logoutText">Logout</string>
+    <string name="homeText">Home</string>
+    <string name="profileText">Profile</string>
+    <string name="backText">Back</string>
+    <string name="loginGoogleText">Login With Google</string>
 </resources>

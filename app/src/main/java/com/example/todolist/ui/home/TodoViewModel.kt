@@ -2,7 +2,7 @@ package com.example.todolist.ui.home
 
 import androidx.lifecycle.*
 import com.example.todolist.data.local.Todo
-import com.example.todolist.data.TodoRepository
+import com.example.todolist.data.repositories.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

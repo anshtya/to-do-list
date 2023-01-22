@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.auth.SignInFragment">
 
-    <ImageView
-        android:id="@+id/imgBack"
+    <ImageButton
+        android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.082"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/backText" />
 
     <TextView
         android:id="@+id/tvSignUp"
@@ -43,7 +44,9 @@
             android:id="@+id/etSignUpEmail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/emailText" />
+            android:hint="@string/emailText"
+            android:inputType="textEmailAddress"
+            android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,13 +59,16 @@
         android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpEmail">
+        app:layout_constraintTop_toBottomOf="@+id/signUpEmail"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSignUpPassword"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/passwordText" />
+            android:hint="@string/passwordText"
+            android:inputType="textPassword"
+            android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

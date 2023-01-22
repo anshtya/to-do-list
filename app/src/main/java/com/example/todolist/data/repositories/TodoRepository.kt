@@ -1,4 +1,4 @@
-package com.example.todolist.data
+package com.example.todolist.data.repositories
 
 import com.example.todolist.data.local.Todo
 import com.example.todolist.data.local.TodoDao
