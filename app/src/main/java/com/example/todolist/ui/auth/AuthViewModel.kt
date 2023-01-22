@@ -2,20 +2,59 @@ package com.example.todolist.ui.auth
 
 import androidx.lifecycle.ViewModel
 import com.example.todolist.data.repositories.AuthRepository
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
-): ViewModel(){
+) : ViewModel() {
 
-    val userAuthorized = authRepository.userAuthorized
+    val userAuthorized = MutableStateFlow<Resource<FirebaseUser>>(Resource.Loading())
 
-    fun signInUser(email: String, password: String) = authRepository.signInUser(email, password)
+    init {
+        if (getUser() != null){
+            userAuthorized.value = Resource.Success(getUser())
+        }
+    }
 
-    fun signUpUser(email: String, password: String) = authRepository.signUpUser(email, password)
+    fun signUpUser(email: String, password: String) {
+        authRepository.signUpUser(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    userAuthorized.value = Resource.Success(getUser())
+                } else {
+                    userAuthorized.value = Resource.Error(task.exception?.message)
+                }
+            }
+    }
+
+    fun signInUser(email: String, password: String) {
+        authRepository.signInUser(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    userAuthorized.value = Resource.Success(getUser()!!)
+                } else {
+                    userAuthorized.value = Resource.Error(task.exception?.message)
+                }
+            }
+    }
 
     fun signOutUser() = authRepository.signOutUser()
 
+    fun getUser() = authRepository.getUser()
+
+}
+
+sealed class Resource<T>(
+    val data: T? = null,
+    val message: String? = null
+) {
+    class Success<T>(data: T?) : Resource<T>(data)
+
+    class Error<T>(message: String?, data: T? = null) : Resource<T>(data, message)
+
+    class Loading<T> : Resource<T>()
 }

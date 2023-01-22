@@ -5,11 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.todolist.databinding.FragmentSignUpBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -28,18 +32,33 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        binding.btSignUp.setOnClickListener {
-            val signUpEmail = binding.etSignUpEmail.text.toString()
-            val signUpPassword = binding.etSignUpPassword.text.toString()
-            if(signUpEmail.isNotEmpty() && signUpPassword.isNotEmpty()){
-                Toast.makeText(context, "valid", Toast.LENGTH_SHORT).show()
-                viewModel.signUpUser(signUpEmail, signUpPassword)
+        viewLifecycleOwner.lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.userAuthorized.collect { currentUser ->
+                    when(currentUser){
+                        is Resource.Error -> {
+                            Snackbar.make(view, "${currentUser.message}", Snackbar.LENGTH_SHORT).show()
+                        }
+                        else -> {}
+                    }
+                }
             }
         }
-    }
 
+        binding.apply {
+
+            ivBack.setOnClickListener {
+                findNavController().navigateUp()
+            }
+
+            btSignUp.setOnClickListener {
+                val signUpEmail = binding.etSignUpEmail.text.toString()
+                val signUpPassword = binding.etSignUpPassword.text.toString()
+                if(signUpEmail.isNotEmpty() && signUpPassword.isNotEmpty()){
+                    viewModel.signUpUser(signUpEmail, signUpPassword)
+                }
+            }
+
+        }
+    }
 }

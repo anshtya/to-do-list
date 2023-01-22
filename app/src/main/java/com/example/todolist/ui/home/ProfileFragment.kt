@@ -28,10 +28,17 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnLogout.setOnClickListener {
-            viewModel.signOutUser()
-            startActivity(Intent(context, AuthActivity::class.java))
-            requireActivity().finish()
+
+        val currentUser = viewModel.getUser()
+        binding.apply {
+
+            tvUserEmail.text = currentUser?.email
+
+            btnLogout.setOnClickListener {
+                viewModel.signOutUser()
+                startActivity(Intent(context, AuthActivity::class.java))
+                requireActivity().finish()
+            }
         }
     }
 }

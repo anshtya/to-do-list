@@ -18,4 +18,5 @@
     <string name="profileText">Profile</string>
     <string name="backText">Back</string>
     <string name="loginGoogleText">Login With Google</string>
+    <string name="userEmailText">User Email:</string>
 </resources>
