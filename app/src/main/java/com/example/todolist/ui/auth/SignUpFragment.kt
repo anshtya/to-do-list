@@ -34,23 +34,6 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewLifecycleOwner.lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.userAuthorized.collect { currentUser ->
-                    when(currentUser){
-                        is Resource.Success -> {
-                            startActivity(Intent(context, TodoActivity::class.java))
-                            requireActivity().finish()
-                        }
-                        is Resource.Error -> {
-                            Snackbar.make(view, "${currentUser.message}", Snackbar.LENGTH_SHORT).show()
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }
-
         binding.apply {
 
             ivBack.setOnClickListener {
@@ -60,11 +43,48 @@ class SignUpFragment : Fragment() {
             btSignUp.setOnClickListener {
                 val signUpEmail = binding.etSignUpEmail.text.toString()
                 val signUpPassword = binding.etSignUpPassword.text.toString()
-                if(signUpEmail.isNotEmpty() && signUpPassword.isNotEmpty()){
+                if (signUpEmail.isNotEmpty() && signUpPassword.isNotEmpty()) {
                     viewModel.signUpUser(signUpEmail, signUpPassword)
+                }
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        viewModel.userAuthorized.collect { currentUser ->
+                            when (currentUser) {
+                                is Resource.Loading -> {
+                                    showProgressBar(true)
+                                }
+                                is Resource.Success -> {
+                                    startActivity(Intent(context, TodoActivity::class.java))
+                                    requireActivity().finish()
+                                    showProgressBar(false)
+                                }
+                                is Resource.Error -> {
+                                    showProgressBar(false)
+                                    Snackbar.make(
+                                        view,
+                                        "${currentUser.message}",
+                                        Snackbar.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
+        }
+    }
+
+    private fun showProgressBar(value: Boolean){
+        binding.apply {
+            if(value){
+                btSignUp.visibility = View.INVISIBLE
+                emailProgressBar.visibility = View.VISIBLE
+            } else {
+                btSignUp.visibility = View.VISIBLE
+                emailProgressBar.visibility = View.INVISIBLE
+            }
         }
     }
 }

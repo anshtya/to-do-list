@@ -21,6 +21,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signUpUser(email: String, password: String) {
+        userAuthorized.value = Resource.Loading()
         authRepository.signUpUser(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -32,6 +33,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signInUser(email: String, password: String) {
+        userAuthorized.value = Resource.Loading()
         authRepository.signInUser(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

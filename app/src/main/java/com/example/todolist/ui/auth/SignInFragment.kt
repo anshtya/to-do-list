@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SignInFragment: Fragment() {
+class SignInFragment : Fragment() {
 
     private lateinit var binding: FragmentSignInBinding
     private val viewModel: AuthViewModel by activityViewModels()
@@ -34,23 +34,6 @@ class SignInFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewLifecycleOwner.lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.userAuthorized.collect { currentUser ->
-                    when(currentUser){
-                        is Resource.Success -> {
-                            startActivity(Intent(context, TodoActivity::class.java))
-                            requireActivity().finish()
-                        }
-                        is Resource.Error -> {
-                            Snackbar.make(view, "${currentUser.message}", Snackbar.LENGTH_SHORT).show()
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }
-
         binding.apply {
 
             tvRegister.setOnClickListener {
@@ -58,14 +41,51 @@ class SignInFragment: Fragment() {
                 findNavController().navigate(action)
             }
 
-            binding.btLogin.setOnClickListener {
+            btLogin.setOnClickListener {
                 val signInEmail = binding.etLoginEmail.text.toString()
                 val signInPassword = binding.etLoginPassword.text.toString()
-                if(signInEmail.isNotEmpty() && signInPassword.isNotEmpty()){
+                if (signInEmail.isNotEmpty() && signInPassword.isNotEmpty()) {
                     viewModel.signInUser(signInEmail, signInPassword)
+                }
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        viewModel.userAuthorized.collect { currentUser ->
+                            when (currentUser) {
+                                is Resource.Loading -> {
+                                    showProgressBar(true)
+                                }
+                                is Resource.Success -> {
+                                    startActivity(Intent(context, TodoActivity::class.java))
+                                    requireActivity().finish()
+                                    showProgressBar(false)
+                                }
+                                is Resource.Error -> {
+                                    showProgressBar(false)
+                                    Snackbar.make(
+                                        view,
+                                        "${currentUser.message}",
+                                        Snackbar.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
+        }
+    }
+
+    private fun showProgressBar(value: Boolean){
+        binding.apply {
+            if(value){
+                btLogin.visibility = View.INVISIBLE
+                emailProgressBar.visibility = View.VISIBLE
+            } else {
+                btLogin.visibility = View.VISIBLE
+                emailProgressBar.visibility = View.INVISIBLE
+            }
         }
     }
 }
