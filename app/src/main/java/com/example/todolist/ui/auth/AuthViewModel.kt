@@ -37,7 +37,7 @@ class AuthViewModel @Inject constructor(
         authRepository.signInUser(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    userAuthorized.value = Resource.Success(getUser()!!)
+                    userAuthorized.value = Resource.Success(getUser())
                 } else {
                     userAuthorized.value = Resource.Error(task.exception?.message)
                 }
