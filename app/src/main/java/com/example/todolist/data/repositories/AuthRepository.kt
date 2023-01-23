@@ -1,17 +1,20 @@
 package com.example.todolist.data.repositories
 
-import com.google.firebase.auth.FirebaseAuth
+import com.example.todolist.data.network.FirebaseSource
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseSource: FirebaseSource
 ) {
 
-    fun signUpUser(email: String, password: String) = firebaseAuth.createUserWithEmailAndPassword(email, password)
+    fun signUpUser(email: String, password: String) = firebaseSource.signUpUser(email, password)
 
-    fun signInUser(email: String, password: String) = firebaseAuth.signInWithEmailAndPassword(email, password)
+    fun signInUser(email: String, password: String) = firebaseSource.signInUser(email, password)
 
-    fun signOutUser() = firebaseAuth.signOut()
+    fun signInWithGoogle(account: GoogleSignInAccount) = firebaseSource.signInWithGoogle(account)
 
-    fun getUser() = firebaseAuth.currentUser
+    fun signOutUser() = firebaseSource.signOutUser()
+
+    fun getUser() = firebaseSource.getUser()
 }
