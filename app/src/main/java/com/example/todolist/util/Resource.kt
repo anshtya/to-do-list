@@ -1,7 +1,12 @@
 package com.example.todolist.util
 
-sealed class Resource(val message: String? = null) {
-    object Success : Resource()
+import com.example.todolist.data.network.User
+
+sealed class Resource(
+    val message: String? = null,
+    val data: User? = null
+) {
+    class Success(data: User? = null) : Resource(message = null, data)
 
     class Error(message: String?) : Resource(message)
 

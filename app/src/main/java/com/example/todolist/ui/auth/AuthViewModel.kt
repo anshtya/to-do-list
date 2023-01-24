@@ -25,7 +25,7 @@ class AuthViewModel @Inject constructor(
         _userAuthorized.value = Resource.Loading
         try {
             authRepository.signUpUser(email, password).await()
-            _userAuthorized.value = Resource.Success
+            _userAuthorized.value = Resource.Success()
         } catch (e: Exception) {
             _userAuthorized.value = Resource.Error(e.message)
         }
@@ -35,7 +35,7 @@ class AuthViewModel @Inject constructor(
         _userAuthorized.value = Resource.Loading
         try {
             authRepository.signInUser(email, password).await()
-            _userAuthorized.value = Resource.Success
+            _userAuthorized.value = Resource.Success()
         } catch (e: Exception) {
             _userAuthorized.value = Resource.Error(e.message)
         }
@@ -45,14 +45,9 @@ class AuthViewModel @Inject constructor(
         _userAuthorized.value = Resource.Loading
         try{
             authRepository.signInWithGoogle(account).await()
-            _userAuthorized.value = Resource.Success
+            _userAuthorized.value = Resource.Success()
         } catch (e: Exception) {
             _userAuthorized.value = Resource.Error(e.message)
         }
     }
-
-    fun signOutUser() = authRepository.signOutUser()
-
-    fun getUser() = authRepository.getUser()
-
 }

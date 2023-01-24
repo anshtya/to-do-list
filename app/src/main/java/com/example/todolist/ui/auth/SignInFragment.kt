@@ -139,7 +139,7 @@ class SignInFragment : Fragment() {
                 }
                 Snackbar.make(
                     requireParentFragment().requireView(),
-                    "${e.message}",
+                    "Request Failed",
                     Snackbar.LENGTH_SHORT
                 ).show()
             }

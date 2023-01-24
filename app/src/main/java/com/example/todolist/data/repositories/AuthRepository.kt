@@ -21,8 +21,4 @@ class AuthRepository @Inject constructor(
     suspend fun signInWithGoogle(account: GoogleSignInAccount) = withContext(Dispatchers.IO) {
         firebaseSource.signInWithGoogle(account)
     }
-
-    fun signOutUser() = firebaseSource.signOutUser()
-
-    fun getUser() = firebaseSource.getUser()
 }
