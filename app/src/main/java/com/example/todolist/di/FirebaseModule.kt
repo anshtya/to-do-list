@@ -2,6 +2,7 @@ package com.example.todolist.di
 
 import android.content.Context
 import com.example.todolist.R
+import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -33,4 +34,10 @@ object FirebaseModule {
     fun provideGoogleSignInClient(@ApplicationContext context: Context, gso: GoogleSignInOptions) =
         GoogleSignIn.getClient(context, gso)
 
+    @Provides
+    @Singleton
+    fun provideOneTapClient(
+        @ApplicationContext
+        context: Context
+    ) = Identity.getSignInClient(context)
 }

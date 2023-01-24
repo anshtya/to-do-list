@@ -53,15 +53,16 @@ class SignUpFragment : Fragment() {
                         viewModel.userAuthorized.collect { currentUser ->
                             when (currentUser) {
                                 is Resource.Loading -> {
-                                    showProgressBar(true)
+                                    btSignUp.visibility = View.INVISIBLE
+                                    emailProgressBar.visibility = View.VISIBLE
                                 }
                                 is Resource.Success -> {
                                     startActivity(Intent(context, TodoActivity::class.java))
                                     requireActivity().finish()
-                                    showProgressBar(false)
                                 }
                                 is Resource.Error -> {
-                                    showProgressBar(false)
+                                    btSignUp.visibility = View.VISIBLE
+                                    emailProgressBar.visibility = View.GONE
                                     Snackbar.make(
                                         view,
                                         "${currentUser.message}",
@@ -77,15 +78,11 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    private fun showProgressBar(value: Boolean){
+    override fun onPause() {
+        super.onPause()
         binding.apply {
-            if(value){
-                btSignUp.visibility = View.INVISIBLE
-                emailProgressBar.visibility = View.VISIBLE
-            } else {
-                btSignUp.visibility = View.VISIBLE
-                emailProgressBar.visibility = View.INVISIBLE
-            }
+            etSignUpEmail.text = null
+            etSignUpPassword.text = null
         }
     }
 }

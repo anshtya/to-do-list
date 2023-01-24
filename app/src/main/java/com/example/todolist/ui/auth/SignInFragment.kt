@@ -65,12 +65,10 @@ class SignInFragment : Fragment() {
                                 is Resource.Success -> {
                                     startActivity(Intent(context, TodoActivity::class.java))
                                     requireActivity().finish()
-                                    btLoginGoogle.visibility = View.VISIBLE
-                                    googleProgressBar.visibility = View.INVISIBLE
                                 }
                                 is Resource.Error -> {
                                     btLoginGoogle.visibility = View.VISIBLE
-                                    googleProgressBar.visibility = View.INVISIBLE
+                                    googleProgressBar.visibility = View.GONE
                                     Snackbar.make(
                                         view,
                                         "${currentUser.message}",
@@ -101,12 +99,10 @@ class SignInFragment : Fragment() {
                                 is Resource.Success -> {
                                     startActivity(Intent(context, TodoActivity::class.java))
                                     requireActivity().finish()
-                                    btLogin.visibility = View.VISIBLE
-                                    emailProgressBar.visibility = View.INVISIBLE
                                 }
                                 is Resource.Error -> {
                                     btLogin.visibility = View.VISIBLE
-                                    emailProgressBar.visibility = View.INVISIBLE
+                                    emailProgressBar.visibility = View.GONE
                                     Snackbar.make(
                                         view,
                                         "${currentUser.message}",
@@ -122,6 +118,14 @@ class SignInFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        binding.apply {
+            etLoginEmail.text = null
+            etLoginPassword.text = null
+        }
+    }
+
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -129,6 +133,10 @@ class SignInFragment : Fragment() {
                 val account = task.getResult(ApiException::class.java)
                 viewModel.signInWithGoogle(account)
             } catch (e: ApiException) {
+                binding.apply {
+                    btLoginGoogle.visibility = View.VISIBLE
+                    googleProgressBar.visibility = View.GONE
+                }
                 Snackbar.make(
                     requireParentFragment().requireView(),
                     "${e.message}",

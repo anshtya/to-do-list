@@ -1,12 +1,9 @@
 package com.example.todolist.util
 
-sealed class Resource<T>(
-    val data: T? = null,
-    val message: String? = null
-) {
-    class Success<T>(data: T?) : Resource<T>(data)
+sealed class Resource(val message: String? = null) {
+    object Success : Resource()
 
-    class Error<T>(message: String?, data: T? = null) : Resource<T>(data, message)
+    class Error(message: String?) : Resource(message)
 
-    class Loading<T> : Resource<T>()
+    object Loading : Resource()
 }
