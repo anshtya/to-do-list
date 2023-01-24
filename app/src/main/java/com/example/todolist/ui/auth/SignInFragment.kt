@@ -56,7 +56,7 @@ class SignInFragment : Fragment() {
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.userAuthorizedGoogle.collect { currentUser ->
+                        viewModel.userAuthorized.collect { currentUser ->
                             when (currentUser) {
                                 is Resource.Loading -> {
                                     btLoginGoogle.visibility = View.INVISIBLE
