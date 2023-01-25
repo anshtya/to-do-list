@@ -1,5 +1,5 @@
 # To-Do List
-This app uses Room persistence library to store tasks and Firebase for auhthentication
+This app uses Room persistence library to store tasks and Firebase for authentication
 
 ## 📸 Screenshots
 |||
