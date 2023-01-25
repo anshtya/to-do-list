@@ -1,5 +1,5 @@
 # To-Do List
-A simple app to record your daily tasks
+This app uses Room persistence library to store tasks and Firebase for auhthentication
 
 ## 📸 Screenshots
 |||
