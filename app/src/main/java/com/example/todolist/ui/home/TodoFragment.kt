@@ -1,4 +1,4 @@
-package com.example.todolist.ui.fragments
+package com.example.todolist.ui.home
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -16,9 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.data.local.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
-import com.example.todolist.ui.adapter.TodoAdapter
-import com.example.todolist.ui.adapter.TodoEvents
-import com.example.todolist.ui.viewmodel.TodoViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint

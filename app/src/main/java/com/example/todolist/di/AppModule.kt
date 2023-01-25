@@ -3,7 +3,6 @@ package com.example.todolist.di
 import android.content.Context
 import androidx.room.Room
 import com.example.todolist.data.local.TodoDatabase
-import com.example.todolist.data.local.TodoDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +25,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDao(db: TodoDatabase): TodoDao = db.todoDao()
+    fun provideDao(db: TodoDatabase) = db.todoDao()
 
 }

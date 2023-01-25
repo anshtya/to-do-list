@@ -1,4 +1,4 @@
-package com.example.todolist.ui.fragments
+package com.example.todolist.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todolist.data.local.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
-import com.example.todolist.ui.viewmodel.TodoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

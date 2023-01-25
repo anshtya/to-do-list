@@ -1,4 +1,4 @@
-package com.example.todolist.ui.adapter
+package com.example.todolist.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.data.local.Todo
 import com.example.todolist.databinding.TodoViewBinding
-import com.example.todolist.ui.fragments.TodoFragment
 
 class TodoAdapter(private val listener: TodoFragment):
     ListAdapter<Todo, TodoAdapter.TodoViewHolder>(DiffCallback) {
