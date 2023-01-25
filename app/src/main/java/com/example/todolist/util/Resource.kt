@@ -10,5 +10,4 @@ sealed class Resource(
 
     class Error(message: String?) : Resource(message)
 
-    object Loading : Resource()
 }

@@ -51,17 +51,15 @@ class SignInFragment : Fragment() {
             }
 
             btLoginGoogle.setOnClickListener {
+                googleProgressBar.visibility = View.VISIBLE
+                btLoginGoogle.visibility = View.INVISIBLE
                 val signInIntent = googleSignInClient.signInIntent
                 resultLauncher.launch(signInIntent)
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.userAuthorized.collect { currentUser ->
+                        viewModel.userAuthorizedGoogle.collect { currentUser ->
                             when (currentUser) {
-                                is Resource.Loading -> {
-                                    btLoginGoogle.visibility = View.INVISIBLE
-                                    googleProgressBar.visibility = View.VISIBLE
-                                }
                                 is Resource.Success -> {
                                     startActivity(Intent(context, TodoActivity::class.java))
                                     requireActivity().finish()
@@ -69,11 +67,13 @@ class SignInFragment : Fragment() {
                                 is Resource.Error -> {
                                     btLoginGoogle.visibility = View.VISIBLE
                                     googleProgressBar.visibility = View.GONE
-                                    Snackbar.make(
-                                        view,
-                                        "${currentUser.message}",
-                                        Snackbar.LENGTH_SHORT
-                                    ).show()
+                                    if(currentUser.message != null){
+                                        Snackbar.make(
+                                            view,
+                                            "${currentUser.message}",
+                                            Snackbar.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
                         }
@@ -85,36 +85,34 @@ class SignInFragment : Fragment() {
                 val signInEmail = binding.etLoginEmail.text.toString()
                 val signInPassword = binding.etLoginPassword.text.toString()
                 if (signInEmail.isNotEmpty() && signInPassword.isNotEmpty()) {
+                    btLogin.visibility = View.INVISIBLE
+                    emailProgressBar.visibility = View.VISIBLE
                     viewModel.signInUser(signInEmail, signInPassword)
-                }
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.userAuthorized.collect { currentUser ->
-                            when (currentUser) {
-                                is Resource.Loading -> {
-                                    btLogin.visibility = View.INVISIBLE
-                                    emailProgressBar.visibility = View.VISIBLE
-                                }
-                                is Resource.Success -> {
-                                    startActivity(Intent(context, TodoActivity::class.java))
-                                    requireActivity().finish()
-                                }
-                                is Resource.Error -> {
-                                    btLogin.visibility = View.VISIBLE
-                                    emailProgressBar.visibility = View.GONE
-                                    Snackbar.make(
-                                        view,
-                                        "${currentUser.message}",
-                                        Snackbar.LENGTH_SHORT
-                                    ).show()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.STARTED) {
+                            viewModel.userAuthorized.collect { currentUser ->
+                                when (currentUser) {
+                                    is Resource.Success -> {
+                                        startActivity(Intent(context, TodoActivity::class.java))
+                                        requireActivity().finish()
+                                    }
+                                    is Resource.Error -> {
+                                        btLogin.visibility = View.VISIBLE
+                                        emailProgressBar.visibility = View.GONE
+                                        Snackbar.make(
+                                            view,
+                                            "${currentUser.message}",
+                                            Snackbar.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
                         }
                     }
+                } else {
+                    Snackbar.make(view, "Fill the required fields", Snackbar.LENGTH_SHORT).show()
                 }
             }
-
         }
     }
 
@@ -133,10 +131,7 @@ class SignInFragment : Fragment() {
                 val account = task.getResult(ApiException::class.java)
                 viewModel.signInWithGoogle(account)
             } catch (e: ApiException) {
-                binding.apply {
-                    btLoginGoogle.visibility = View.VISIBLE
-                    googleProgressBar.visibility = View.GONE
-                }
+                viewModel.signInWithGoogleCancelled()
                 Snackbar.make(
                     requireParentFragment().requireView(),
                     "Request Failed",

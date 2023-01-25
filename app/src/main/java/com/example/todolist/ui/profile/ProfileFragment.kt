@@ -42,18 +42,17 @@ class ProfileFragment : Fragment() {
             }
         }
 
+
+
         binding.apply {
             btnLogout.setOnClickListener {
+                btnLogout.visibility = View.INVISIBLE
+                logoutProgressBar.visibility = View.VISIBLE
                 viewModel.signOutUser()
-
                 viewLifecycleOwner.lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
                         viewModel.userProfile.collect { profile ->
                             when (profile) {
-                                is Resource.Loading -> {
-                                    btnLogout.visibility = View.INVISIBLE
-                                    logoutProgressBar.visibility = View.VISIBLE
-                                }
                                 is Resource.Success -> {
                                     startActivity(Intent(context, AuthActivity::class.java))
                                     requireActivity().finish()
@@ -74,16 +73,13 @@ class ProfileFragment : Fragment() {
             }
 
             btnDeleteAcc.setOnClickListener {
+                btnDeleteAcc.visibility = View.INVISIBLE
+                deleteAccProgressBar.visibility = View.VISIBLE
                 viewModel.deleteUser()
-
                 viewLifecycleOwner.lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
                         viewModel.userProfile.collect { profile ->
                             when (profile) {
-                                is Resource.Loading -> {
-                                    btnDeleteAcc.visibility = View.INVISIBLE
-                                    deleteAccProgressBar.visibility = View.VISIBLE
-                                }
                                 is Resource.Success -> {
                                     startActivity(Intent(context, AuthActivity::class.java))
                                     requireActivity().finish()

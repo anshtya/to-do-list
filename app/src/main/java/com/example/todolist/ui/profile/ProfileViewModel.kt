@@ -6,7 +6,9 @@ import com.example.todolist.data.network.User
 import com.example.todolist.data.repositories.ProfileRepository
 import com.example.todolist.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -17,11 +19,11 @@ class ProfileViewModel @Inject constructor(
     private val userProfileRepository: ProfileRepository
 ): ViewModel() {
 
-    private val _userProfile = MutableStateFlow<Resource>(Resource.Loading)
-    val userProfile: StateFlow<Resource>
+    private val _userProfile = MutableSharedFlow<Resource>()
+    val userProfile: SharedFlow<Resource>
         get() = _userProfile
 
-    private val _userProfileDetails = MutableStateFlow<Resource>(Resource.Loading)
+    private val _userProfileDetails = MutableStateFlow<Resource>(Resource.Success(null))
     val userProfileDetails: StateFlow<Resource>
         get() = _userProfileDetails
 
@@ -31,18 +33,16 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun signOutUser() = viewModelScope.launch {
-        _userProfile.value = Resource.Loading
         try {
             userProfileRepository.oneTapClientSignOut().await()
             userProfileRepository.firebaseAuthSignOut()
-            _userProfile.value = Resource.Success()
+            _userProfile.emit(Resource.Success())
         } catch (e: Exception){
-            _userProfile.value = Resource.Error(e.message)
+            _userProfile.emit(Resource.Error(e.message))
         }
     }
 
     fun deleteUser() = viewModelScope.launch{
-        _userProfile.value = Resource.Loading
         try {
             val currentUser = userProfileRepository.getUser()
             currentUser?.let {
@@ -52,9 +52,9 @@ class ProfileViewModel @Inject constructor(
                     deleteAccount()?.await()
                 }
             }
-            _userProfile.value = Resource.Success()
+            _userProfile.emit(Resource.Success())
         } catch (e: Exception){
-            _userProfile.value = Resource.Error(e.message)
+            _userProfile.emit(Resource.Error(e.message))
         }
     }
 }
