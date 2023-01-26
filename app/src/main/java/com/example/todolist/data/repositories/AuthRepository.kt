@@ -36,8 +36,8 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    private fun addUserToFirestore() = auth.currentUser?.apply {
+    private suspend fun addUserToFirestore() = auth.currentUser?.apply {
         val user = User(uid, email)
-        db.collection(USERS).document(user.userId).set(user)
+        db.collection(USERS).document(user.userId).set(user).await()
     }
 }
