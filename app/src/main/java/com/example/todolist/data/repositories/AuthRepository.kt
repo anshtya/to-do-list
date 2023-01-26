@@ -36,10 +36,8 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    private suspend fun addUserToFirestore() = auth.currentUser?.apply {
-            val user = User(uid, email)
-            withContext(Dispatchers.IO) {
-                db.collection(USERS).document(user.userId).set(user)
-            }
+    private fun addUserToFirestore() = auth.currentUser?.apply {
+        val user = User(uid, email)
+        db.collection(USERS).document(user.userId).set(user)
     }
 }
