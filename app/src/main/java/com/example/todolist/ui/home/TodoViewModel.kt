@@ -9,34 +9,33 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class TodoViewModel @Inject constructor(
-    private val repository: TodoRepository
-    ) : ViewModel() {
+class TodoViewModel : ViewModel() {
 
-    val allTodos = repository.getAllTodos().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+//    val allTodos = repository.getAllTodos().stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.WhileSubscribed(5000),
+//        initialValue = emptyList()
+//    )
 
-    fun getTodo(id: Int) = repository.getTodo(id)
+    val allTodos = emptyList<Todo>()
 
-    fun insertTodo(newTodo: Todo){
-        viewModelScope.launch {
-            repository.insert(newTodo)
-        }
-    }
-
-    fun updateTodo(updatedTodo: Todo){
-        viewModelScope.launch {
-            repository.update(updatedTodo)
-        }
-    }
-
-    fun deleteTodo(todo: Todo){
-        viewModelScope.launch {
-            repository.delete(todo)
-        }
-    }
+//    fun getTodo(id: Int) = repository.getTodo(id)
+//
+//    fun insertTodo(newTodo: Todo){
+//        viewModelScope.launch {
+//            repository.insert(newTodo)
+//        }
+//    }
+//
+//    fun updateTodo(updatedTodo: Todo){
+//        viewModelScope.launch {
+//            repository.update(updatedTodo)
+//        }
+//    }
+//
+//    fun deleteTodo(todo: Todo){
+//        viewModelScope.launch {
+//            repository.delete(todo)
+//        }
+//    }
 }

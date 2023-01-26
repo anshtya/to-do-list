@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(
 
     fun getUser() = viewModelScope.launch {
         val currentUser = userProfileRepository.getUser()
-        _userProfileDetails.value = Resource.Success(User(currentUser?.email))
+        _userProfileDetails.value = Resource.Success(User(currentUser!!.uid, currentUser.email))
     }
 
     fun signOutUser() = viewModelScope.launch {

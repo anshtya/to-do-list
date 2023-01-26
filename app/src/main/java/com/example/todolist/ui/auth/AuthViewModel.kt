@@ -27,7 +27,7 @@ class AuthViewModel @Inject constructor(
 
     fun signUpUser(email: String, password: String) = viewModelScope.launch {
         try {
-            authRepository.signUpUser(email, password).await()
+            authRepository.signUpUser(email, password)
             _userAuthorized.emit(Resource.Success())
         } catch (e: Exception) {
             _userAuthorized.emit(Resource.Error(e.message))
@@ -36,7 +36,7 @@ class AuthViewModel @Inject constructor(
 
     fun signInUser(email: String, password: String) = viewModelScope.launch {
         try {
-            authRepository.signInUser(email, password).await()
+            authRepository.signInUser(email, password)
             _userAuthorized.emit(Resource.Success())
         } catch (e: Exception) {
             _userAuthorized.emit(Resource.Error(e.message))
@@ -45,7 +45,7 @@ class AuthViewModel @Inject constructor(
 
     fun signInWithGoogle(account: GoogleSignInAccount) = viewModelScope.launch {
         try{
-            authRepository.signInWithGoogle(account).await()
+            authRepository.signInWithGoogle(account)
             _userAuthorizedGoogle.emit(Resource.Success())
         } catch (e: Exception) {
             _userAuthorizedGoogle.emit(Resource.Error(e.message))
