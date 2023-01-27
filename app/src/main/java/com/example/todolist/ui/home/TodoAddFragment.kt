@@ -6,15 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todolist.data.local.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TodoAddFragment : Fragment() {
@@ -35,20 +31,14 @@ class TodoAddFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = navigationArgs.todoId
-//        if(id > 0){
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                    viewModel.getTodo(id).collect {
-//                        bind(it)
-//                    }
-//                }
-//            }
-//        } else {
-//            binding.btnSaveTodo.setOnClickListener {
-//                addNewTodo()
-//            }
-//        }
+        val todo = navigationArgs.todo
+        if(todo.id != ""){
+            bind(todo)
+        } else {
+            binding.btnSaveTodo.setOnClickListener {
+                addNewTodo()
+            }
+        }
     }
 
     private fun addNewTodo(){
@@ -57,14 +47,9 @@ class TodoAddFragment : Fragment() {
                 txtEnterTodo.text = null
             } else {
                 val todoName = txtEnterTodo.text.toString()
-//                viewModel.insertTodo(
-//                    Todo(
-//                        id = 1,
-//                        name = todoName
-//                    )
-//                )
+                viewModel.insertTodo(todoName)
                 txtEnterTodo.text = null
-//                findNavController().navigateUp()
+                findNavController().navigateUp()
             }
         }
     }
@@ -73,13 +58,13 @@ class TodoAddFragment : Fragment() {
         binding.apply {
             txtEnterTodo.setText(todo.name)
             btnSaveTodo.setOnClickListener {
-//                viewModel.updateTodo(
-//                    Todo(
-//                        id = todo.id,
-//                        name = txtEnterTodo.text.toString(),
-//                        isDone = todo.isDone
-//                    )
-//                )
+                viewModel.updateTodo(
+                    Todo(
+                        id = todo.id,
+                        name = txtEnterTodo.text.toString(),
+                        done = todo.done
+                    )
+                )
                 val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
                 findNavController().navigate(action)
             }

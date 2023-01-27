@@ -33,19 +33,11 @@ class TodoAdapter(private val listener: TodoFragment):
                     currTodo?.let { todo ->
                         if (chkIsDone.isChecked) {
                             listener.onTodoUpdate(
-                                Todo(
-                                    id = todo.id,
-                                    name = todo.name,
-                                    isDone = true
-                                )
+                                Todo(id = todo.id, name = todo.name, done = true)
                             )
                         } else {
                             listener.onTodoUpdate(
-                                Todo(
-                                    id = todo.id,
-                                    name = todo.name,
-                                    isDone = false
-                                )
+                                Todo(id = todo.id, name = todo.name, done = false)
                             )
                         }
                     }
@@ -64,7 +56,7 @@ class TodoAdapter(private val listener: TodoFragment):
             currTodo = todo
             binding.apply {
                 tvTodo.text = todo.name
-                chkIsDone.isChecked = todo.isDone
+                chkIsDone.isChecked = todo.done
             }
         }
     }

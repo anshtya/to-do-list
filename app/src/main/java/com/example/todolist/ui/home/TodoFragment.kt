@@ -41,13 +41,13 @@ class TodoFragment : Fragment(), TodoEvents {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
 
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.allTodos.collect {
-//                    todoAdapter.submitList(it)
-//                }
-//            }
-//        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.todos.collect {
+                    todoAdapter.submitList(it)
+                }
+            }
+        }
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -64,10 +64,10 @@ class TodoFragment : Fragment(), TodoEvents {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val currTodo = todoAdapter.currentList[position]
-//                viewModel.deleteTodo(currTodo)
+                viewModel.deleteTodo(currTodo.id)
                 Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
                     setAction("Undo"){
-//                        viewModel.insertTodo(currTodo)
+                        viewModel.insertTodo(currTodo.name)
                     }
                     show()
                 }
@@ -80,24 +80,24 @@ class TodoFragment : Fragment(), TodoEvents {
 
         binding.btnAddTodo.setOnClickListener {
             val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
-                getString(R.string.add)
+                getString(R.string.add), Todo()
             )
             findNavController().navigate(action)
         }
     }
 
-//    private fun showTodoDialog(todo: Todo) {
-//        val options = arrayOf("Edit","Delete")
-//        MaterialAlertDialogBuilder(requireContext())
-//            .setCancelable(true)
-//            .setItems(options){ _,which ->
-//                when(options[which]){
-//                    "Edit" -> onTodoEdit(todo.id)
-//                    "Delete" -> viewModel.deleteTodo(todo)
-//                }
-//            }
-//            .show()
-//    }
+    private fun showTodoDialog(todo: Todo) {
+        val options = arrayOf("Edit","Delete")
+        MaterialAlertDialogBuilder(requireContext())
+            .setCancelable(true)
+            .setItems(options){ _,which ->
+                when(options[which]){
+                    "Edit" -> onTodoEdit(todo)
+                    "Delete" -> viewModel.deleteTodo(todo.id)
+                }
+            }
+            .show()
+    }
 
     private fun setRecyclerView(){
         todoAdapter = TodoAdapter(this)
@@ -109,18 +109,17 @@ class TodoFragment : Fragment(), TodoEvents {
         }
     }
 
-    private fun onTodoEdit(todoId: Int) {
+    private fun onTodoEdit(todo: Todo) {
         val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
-            getString(R.string.edit),
-            todoId
+            getString(R.string.edit),todo
         )
         findNavController().navigate(action)
     }
 
     override fun onTodoUpdate(todo: Todo) {
-//        viewModel.updateTodo(todo)
+        viewModel.updateTodo(todo)
     }
     override fun callTodoDialog(todo: Todo) {
-//        showTodoDialog(todo)
+        showTodoDialog(todo)
     }
 }

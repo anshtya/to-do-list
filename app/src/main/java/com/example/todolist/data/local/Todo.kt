@@ -1,7 +1,11 @@
 package com.example.todolist.data.local
 
+import com.example.todolist.data.network.User
+import java.io.Serializable
+
 data class Todo(
-    var id: Int,
-    var name: String,
-    var isDone: Boolean = false
-)
+    val id: String = "",
+    val name: String = "",
+    val createdBy: User = User(),
+    val done: Boolean = false
+) : Serializable
