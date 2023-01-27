@@ -42,61 +42,45 @@ class ProfileFragment : Fragment() {
             }
         }
 
-
-
-        binding.apply {
-            btnLogout.setOnClickListener {
-                btnLogout.visibility = View.INVISIBLE
-                logoutProgressBar.visibility = View.VISIBLE
-                viewModel.signOutUser()
-                viewLifecycleOwner.lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.userProfile.collect { profile ->
-                            when (profile) {
-                                is Resource.Success -> {
-                                    startActivity(Intent(context, AuthActivity::class.java))
-                                    requireActivity().finish()
-                                }
-                                is Resource.Error -> {
-                                    btnLogout.visibility = View.VISIBLE
-                                    logoutProgressBar.visibility = View.GONE
-                                    Snackbar.make(
-                                        view,
-                                        "${profile.message}",
-                                        Snackbar.LENGTH_SHORT
-                                    ).show()
-                                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.userProfile.collect { profile ->
+                    when (profile) {
+                        is Resource.Loading -> {
+                            binding.apply {
+                                btnDeleteAcc.visibility = View.INVISIBLE
+                                btnLogout.visibility = View.INVISIBLE
+                                profileProgressBar.visibility = View.VISIBLE
                             }
+                        }
+                        is Resource.Success -> {
+                            startActivity(Intent(context, AuthActivity::class.java))
+                            requireActivity().finish()
+                        }
+                        is Resource.Error -> {
+                            binding.apply {
+                                btnDeleteAcc.visibility = View.VISIBLE
+                                btnLogout.visibility = View.VISIBLE
+                                profileProgressBar.visibility = View.GONE
+                            }
+                            Snackbar.make(
+                                view,
+                                "${profile.message}",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
             }
+        }
+
+        binding.apply {
+            btnLogout.setOnClickListener {
+                viewModel.signOutUser()
+            }
 
             btnDeleteAcc.setOnClickListener {
-                btnDeleteAcc.visibility = View.INVISIBLE
-                deleteAccProgressBar.visibility = View.VISIBLE
                 viewModel.deleteUser()
-                viewLifecycleOwner.lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.userProfile.collect { profile ->
-                            when (profile) {
-                                is Resource.Success -> {
-                                    startActivity(Intent(context, AuthActivity::class.java))
-                                    requireActivity().finish()
-                                }
-                                is Resource.Error -> {
-                                    btnDeleteAcc.visibility = View.VISIBLE
-                                    deleteAccProgressBar.visibility = View.GONE
-                                    Snackbar.make(
-                                        view,
-                                        "${profile.message}",
-                                        Snackbar.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }

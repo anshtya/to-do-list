@@ -35,6 +35,36 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.userAuthorized.collect { currentUser ->
+                    when (currentUser) {
+                        is Resource.Loading -> {
+                            binding.apply {
+                                btSignUp.visibility = View.INVISIBLE
+                                emailProgressBar.visibility = View.VISIBLE
+                            }
+                        }
+                        is Resource.Success -> {
+                            startActivity(Intent(context, TodoActivity::class.java))
+                            requireActivity().finish()
+                        }
+                        is Resource.Error -> {
+                            binding.apply {
+                                btSignUp.visibility = View.VISIBLE
+                                emailProgressBar.visibility = View.GONE
+                            }
+                            Snackbar.make(
+                                view,
+                                "${currentUser.message}",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            }
+        }
+
         binding.apply {
 
             ivBack.setOnClickListener {
@@ -45,30 +75,7 @@ class SignUpFragment : Fragment() {
                 val signUpEmail = binding.etSignUpEmail.text.toString()
                 val signUpPassword = binding.etSignUpPassword.text.toString()
                 if (signUpEmail.isNotEmpty() && signUpPassword.isNotEmpty()) {
-                    btSignUp.visibility = View.INVISIBLE
-                    emailProgressBar.visibility = View.VISIBLE
                     viewModel.signUpUser(signUpEmail, signUpPassword)
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        repeatOnLifecycle(Lifecycle.State.STARTED) {
-                            viewModel.userAuthorized.collect { currentUser ->
-                                when (currentUser) {
-                                    is Resource.Success -> {
-                                        startActivity(Intent(context, TodoActivity::class.java))
-                                        requireActivity().finish()
-                                    }
-                                    is Resource.Error -> {
-                                        btSignUp.visibility = View.VISIBLE
-                                        emailProgressBar.visibility = View.GONE
-                                        Snackbar.make(
-                                            view,
-                                            "${currentUser.message}",
-                                            Snackbar.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            }
-                        }
-                    }
                 } else {
                     Snackbar.make(view, "Fill the required fields", Snackbar.LENGTH_SHORT).show()
                 }

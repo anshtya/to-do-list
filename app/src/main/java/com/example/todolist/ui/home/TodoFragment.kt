@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.data.local.Todo
+import com.example.todolist.data.network.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -43,8 +43,13 @@ class TodoFragment : Fragment(), TodoEvents {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.todos.collect {
-                    todoAdapter.submitList(it)
+                viewModel.todos.collect { todos ->
+                    if(todos.isEmpty()){
+                        binding.tvEmptyList.visibility = View.VISIBLE
+                    } else {
+                        todoAdapter.submitList(todos)
+                        binding.tvEmptyList.visibility = View.GONE
+                    }
                 }
             }
         }

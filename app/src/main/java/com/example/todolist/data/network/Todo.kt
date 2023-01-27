@@ -1,6 +1,5 @@
-package com.example.todolist.data.local
+package com.example.todolist.data.network
 
-import com.example.todolist.data.network.User
 import java.io.Serializable
 
 data class Todo(

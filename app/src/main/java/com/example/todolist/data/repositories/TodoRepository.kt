@@ -1,6 +1,6 @@
 package com.example.todolist.data.repositories
 
-import com.example.todolist.data.local.Todo
+import com.example.todolist.data.network.Todo
 import com.example.todolist.data.network.User
 import com.example.todolist.util.Constants.Companion.TODOS
 import com.example.todolist.util.Constants.Companion.USERS

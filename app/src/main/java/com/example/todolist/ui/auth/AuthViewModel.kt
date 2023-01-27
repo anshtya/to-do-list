@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +25,7 @@ class AuthViewModel @Inject constructor(
         get() = _userAuthorizedGoogle
 
     fun signUpUser(email: String, password: String) = viewModelScope.launch {
+        _userAuthorized.emit(Resource.Loading())
         try {
             authRepository.signUpUser(email, password)
             _userAuthorized.emit(Resource.Success())
@@ -35,6 +35,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signInUser(email: String, password: String) = viewModelScope.launch {
+        _userAuthorized.emit(Resource.Loading())
         try {
             authRepository.signInUser(email, password)
             _userAuthorized.emit(Resource.Success())
@@ -44,6 +45,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signInWithGoogle(account: GoogleSignInAccount) = viewModelScope.launch {
+        _userAuthorizedGoogle.emit(Resource.Loading())
         try{
             authRepository.signInWithGoogle(account)
             _userAuthorizedGoogle.emit(Resource.Success())

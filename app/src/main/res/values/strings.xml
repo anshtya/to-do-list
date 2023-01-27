@@ -20,4 +20,5 @@
     <string name="loginGoogleText">Login With Google</string>
     <string name="userEmailText">User Email:</string>
     <string name="delete_account">Delete Account</string>
+    <string name="emptyListMessage">Yay! No Tasks</string>
 </resources>

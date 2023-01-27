@@ -33,6 +33,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun signOutUser() = viewModelScope.launch {
+        _userProfile.emit(Resource.Loading())
         try {
             userProfileRepository.oneTapClientSignOut().await()
             userProfileRepository.firebaseAuthSignOut()
@@ -43,6 +44,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun deleteUser() = viewModelScope.launch{
+        _userProfile.emit(Resource.Loading())
         try {
             val currentUser = userProfileRepository.getUser()
             currentUser?.let {
