@@ -42,6 +42,7 @@ android {
 dependencies {
     def hilt_version = "2.44"
     def navigation_version = "2.5.3"
+    def datastore_version = "1.0.0"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.0'
@@ -64,4 +65,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
     implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    //DataStore
+    implementation "androidx.datastore:datastore-preferences:$datastore_version"
 }

@@ -2,6 +2,7 @@ package com.example.todolist.di
 
 import android.content.Context
 import com.example.todolist.R
+import com.example.todolist.data.network.DataStoreManager
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -45,4 +46,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirestore() = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(@ApplicationContext context: Context) = DataStoreManager(context)
 }
