@@ -52,9 +52,6 @@ class TodoAddFragment : Fragment() {
                             todoProgressBar.visibility = View.VISIBLE
                         }
                     }
-                    is Resource.Success -> {
-                        findNavController().navigateUp()
-                    }
                     else -> {}
                 }
             }
@@ -68,6 +65,7 @@ class TodoAddFragment : Fragment() {
             } else {
                 val todoName = txtEnterTodo.text.toString()
                 viewModel.insertTodo(todoName)
+                findNavController().navigateUp()
             }
         }
     }
@@ -78,11 +76,12 @@ class TodoAddFragment : Fragment() {
             btnSaveTodo.setOnClickListener {
                 viewModel.updateTodo(
                     Todo(
-                    id = todo.id,
-                    name = txtEnterTodo.text.toString(),
-                    done = todo.done
+                        id = todo.id,
+                        name = txtEnterTodo.text.toString(),
+                        done = todo.done
+                    )
                 )
-                )
+                findNavController().navigateUp()
             }
         }
     }

@@ -38,14 +38,12 @@ class TodoViewModel @Inject constructor(
         _todoStatus.emit(Resource.Loading())
         todoRepository.insertTodo(todoName)
         getAllTodo()
-        _todoStatus.emit(Resource.Success())
     }
 
     fun updateTodo(updatedTodo: Todo) = viewModelScope.launch {
         _todoStatus.emit(Resource.Loading())
         todoRepository.updateTodo(updatedTodo)
         getAllTodo()
-        _todoStatus.emit(Resource.Success())
     }
 
     fun deleteTodo(todoId: String) = viewModelScope.launch {
