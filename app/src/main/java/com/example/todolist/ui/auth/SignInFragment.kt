@@ -43,6 +43,68 @@ class SignInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.userAuthorized.collect { currentUser ->
+                    when (currentUser) {
+                        is Resource.Loading -> {
+                            binding.apply {
+                                btLogin.visibility = View.INVISIBLE
+                                emailProgressBar.visibility = View.VISIBLE
+                            }
+                        }
+                        is Resource.Success -> {
+                            startActivity(Intent(context, TodoActivity::class.java))
+                            requireActivity().finish()
+                        }
+                        is Resource.Error -> {
+                            binding.apply {
+                                btLogin.visibility = View.VISIBLE
+                                emailProgressBar.visibility = View.GONE
+                            }
+                            Snackbar.make(
+                                view,
+                                "${currentUser.message}",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.userAuthorizedGoogle.collect { currentUser ->
+                    when (currentUser) {
+                        is Resource.Loading -> {
+                            binding.apply {
+                                googleProgressBar.visibility = View.VISIBLE
+                                btLoginGoogle.visibility = View.INVISIBLE
+                            }
+                        }
+                        is Resource.Success -> {
+                            startActivity(Intent(context, TodoActivity::class.java))
+                            requireActivity().finish()
+                        }
+                        is Resource.Error -> {
+                            binding.apply {
+                                btLoginGoogle.visibility = View.VISIBLE
+                                googleProgressBar.visibility = View.GONE
+                            }
+                            if(currentUser.message != null){
+                                Snackbar.make(
+                                    view,
+                                    "${currentUser.message}",
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         binding.apply {
 
             tvRegister.setOnClickListener {
@@ -51,64 +113,15 @@ class SignInFragment : Fragment() {
             }
 
             btLoginGoogle.setOnClickListener {
-                googleProgressBar.visibility = View.VISIBLE
-                btLoginGoogle.visibility = View.INVISIBLE
                 val signInIntent = googleSignInClient.signInIntent
                 resultLauncher.launch(signInIntent)
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.userAuthorizedGoogle.collect { currentUser ->
-                            when (currentUser) {
-                                is Resource.Success -> {
-                                    startActivity(Intent(context, TodoActivity::class.java))
-                                    requireActivity().finish()
-                                }
-                                is Resource.Error -> {
-                                    btLoginGoogle.visibility = View.VISIBLE
-                                    googleProgressBar.visibility = View.GONE
-                                    if(currentUser.message != null){
-                                        Snackbar.make(
-                                            view,
-                                            "${currentUser.message}",
-                                            Snackbar.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
 
             btLogin.setOnClickListener {
                 val signInEmail = binding.etLoginEmail.text.toString()
                 val signInPassword = binding.etLoginPassword.text.toString()
                 if (signInEmail.isNotEmpty() && signInPassword.isNotEmpty()) {
-                    btLogin.visibility = View.INVISIBLE
-                    emailProgressBar.visibility = View.VISIBLE
                     viewModel.signInUser(signInEmail, signInPassword)
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        repeatOnLifecycle(Lifecycle.State.STARTED) {
-                            viewModel.userAuthorized.collect { currentUser ->
-                                when (currentUser) {
-                                    is Resource.Success -> {
-                                        startActivity(Intent(context, TodoActivity::class.java))
-                                        requireActivity().finish()
-                                    }
-                                    is Resource.Error -> {
-                                        btLogin.visibility = View.VISIBLE
-                                        emailProgressBar.visibility = View.GONE
-                                        Snackbar.make(
-                                            view,
-                                            "${currentUser.message}",
-                                            Snackbar.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            }
-                        }
-                    }
                 } else {
                     Snackbar.make(view, "Fill the required fields", Snackbar.LENGTH_SHORT).show()
                 }

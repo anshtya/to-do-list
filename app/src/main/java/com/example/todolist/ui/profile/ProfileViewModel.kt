@@ -3,7 +3,7 @@ package com.example.todolist.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todolist.data.network.User
-import com.example.todolist.data.repositories.ProfileRepository
+import com.example.todolist.data.repositories.AuthRepository
 import com.example.todolist.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,12 +11,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userProfileRepository: ProfileRepository
+    private val authRepository: AuthRepository
 ): ViewModel() {
 
     private val _userProfile = MutableSharedFlow<Resource>()
@@ -28,14 +27,15 @@ class ProfileViewModel @Inject constructor(
         get() = _userProfileDetails
 
     fun getUser() = viewModelScope.launch {
-        val currentUser = userProfileRepository.getUser()
-        _userProfileDetails.value = Resource.Success(User(currentUser?.email))
+        val currentUser = authRepository.getUser()
+        _userProfileDetails.value = Resource.Success(User(currentUser!!.uid, currentUser.email))
     }
 
     fun signOutUser() = viewModelScope.launch {
+        _userProfile.emit(Resource.Loading())
         try {
-            userProfileRepository.oneTapClientSignOut().await()
-            userProfileRepository.firebaseAuthSignOut()
+            authRepository.oneTapClientSignOut()
+            authRepository.firebaseAuthSignOut()
             _userProfile.emit(Resource.Success())
         } catch (e: Exception){
             _userProfile.emit(Resource.Error(e.message))
@@ -43,14 +43,11 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun deleteUser() = viewModelScope.launch{
+        _userProfile.emit(Resource.Loading())
         try {
-            val currentUser = userProfileRepository.getUser()
+            val currentUser = authRepository.getUser()
             currentUser?.let {
-                userProfileRepository.apply {
-                    revokeAccess().await()
-                    oneTapClientSignOut().await()
-                    deleteAccount()?.await()
-                }
+                authRepository.deleteAccount()
             }
             _userProfile.emit(Resource.Success())
         } catch (e: Exception){

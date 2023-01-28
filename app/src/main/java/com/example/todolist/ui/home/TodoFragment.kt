@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.data.local.Todo
+import com.example.todolist.data.network.Todo
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -43,8 +43,13 @@ class TodoFragment : Fragment(), TodoEvents {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allTodos.collect {
-                    todoAdapter.submitList(it)
+                viewModel.todos.collect { todos ->
+                    if(todos.isEmpty()){
+                        binding.tvEmptyList.visibility = View.VISIBLE
+                    } else {
+                        todoAdapter.submitList(todos)
+                        binding.tvEmptyList.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -64,10 +69,10 @@ class TodoFragment : Fragment(), TodoEvents {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val currTodo = todoAdapter.currentList[position]
-                viewModel.deleteTodo(currTodo)
+                viewModel.deleteTodo(currTodo.id)
                 Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
                     setAction("Undo"){
-                        viewModel.insertTodo(currTodo)
+                        viewModel.insertTodo(currTodo.name)
                     }
                     show()
                 }
@@ -80,7 +85,7 @@ class TodoFragment : Fragment(), TodoEvents {
 
         binding.btnAddTodo.setOnClickListener {
             val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
-                getString(R.string.add)
+                getString(R.string.add), Todo()
             )
             findNavController().navigate(action)
         }
@@ -92,8 +97,8 @@ class TodoFragment : Fragment(), TodoEvents {
             .setCancelable(true)
             .setItems(options){ _,which ->
                 when(options[which]){
-                    "Edit" -> onTodoEdit(todo.id)
-                    "Delete" -> viewModel.deleteTodo(todo)
+                    "Edit" -> onTodoEdit(todo)
+                    "Delete" -> viewModel.deleteTodo(todo.id)
                 }
             }
             .show()
@@ -109,10 +114,9 @@ class TodoFragment : Fragment(), TodoEvents {
         }
     }
 
-    private fun onTodoEdit(todoId: Int) {
+    private fun onTodoEdit(todo: Todo) {
         val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
-            getString(R.string.edit),
-            todoId
+            getString(R.string.edit),todo
         )
         findNavController().navigate(action)
     }

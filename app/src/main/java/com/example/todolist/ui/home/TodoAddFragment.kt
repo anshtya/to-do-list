@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.todolist.data.local.Todo
+import com.example.todolist.data.network.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
+import com.example.todolist.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -35,60 +34,55 @@ class TodoAddFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = navigationArgs.todoId
-        if(id > 0){
-            viewLifecycleOwner.lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.getTodo(id).collect {
-                        bind(it)
-                    }
-                }
-            }
+        val todo = navigationArgs.todo
+        if(todo.id != ""){
+            bind(todo)
         } else {
             binding.btnSaveTodo.setOnClickListener {
                 addNewTodo()
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.todoStatus.collect{
+                when(it){
+                    is Resource.Loading -> {
+                        binding.apply {
+                            btnSaveTodo.visibility = View.INVISIBLE
+                            todoProgressBar.visibility = View.VISIBLE
+                        }
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun addNewTodo(){
-        if (isEmpty()) {
-            binding.txtEnterTodo.text = null
-        } else {
-            val todoName = binding.txtEnterTodo.text.toString()
-            viewModel.insertTodo(
-                Todo(
-                name = todoName
-            )
-            )
-            binding.txtEnterTodo.text = null
-            findNavController().navigateUp()
+        binding.apply {
+            if (txtEnterTodo.text.toString().isEmpty()) {
+                txtEnterTodo.text = null
+            } else {
+                val todoName = txtEnterTodo.text.toString()
+                viewModel.insertTodo(todoName)
+                findNavController().navigateUp()
+            }
         }
     }
 
     private fun bind(todo: Todo) {
         binding.apply {
             txtEnterTodo.setText(todo.name)
-            btnSaveTodo.setOnClickListener { viewModel.updateTodo(
-                Todo(
-                id = todo.id,
-                name = txtEnterTodo.text.toString(),
-                isDone = todo.isDone
-            )
-            )
-                val action = TodoAddFragmentDirections.actionTodoAddFragmentToTodoFragment()
-                findNavController().navigate(action)
+            btnSaveTodo.setOnClickListener {
+                viewModel.updateTodo(
+                    Todo(
+                        id = todo.id,
+                        name = txtEnterTodo.text.toString(),
+                        done = todo.done
+                    )
+                )
+                findNavController().navigateUp()
             }
         }
-    }
-
-    /*
-    * Checks if EditText is empty or not
-     */
-    private fun isEmpty(): Boolean{
-        if(binding.txtEnterTodo.text.toString().trim().isEmpty()) {
-            return true
-        }
-        return false
     }
 }

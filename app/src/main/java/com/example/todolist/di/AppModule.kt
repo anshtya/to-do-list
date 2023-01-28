@@ -1,8 +1,13 @@
 package com.example.todolist.di
 
 import android.content.Context
-import androidx.room.Room
-import com.example.todolist.data.local.TodoDatabase
+import com.example.todolist.R
+import com.example.todolist.data.network.DataStoreManager
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,15 +21,33 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext app: Context) =
-        Room.databaseBuilder(
-            app,
-            TodoDatabase::class.java,
-            "article_db.db"
-        ).fallbackToDestructiveMigration().build()
+    fun provideFirebaseAuth() = FirebaseAuth.getInstance()
 
     @Provides
     @Singleton
-    fun provideDao(db: TodoDatabase) = db.todoDao()
+    fun provideGso(@ApplicationContext context: Context) =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
 
+    @Provides
+    @Singleton
+    fun provideGoogleSignInClient(@ApplicationContext context: Context, gso: GoogleSignInOptions) =
+        GoogleSignIn.getClient(context, gso)
+
+    @Provides
+    @Singleton
+    fun provideOneTapClient(
+        @ApplicationContext
+        context: Context
+    ) = Identity.getSignInClient(context)
+
+    @Provides
+    @Singleton
+    fun provideFirestore() = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(@ApplicationContext context: Context) = DataStoreManager(context)
 }

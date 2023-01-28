@@ -1,42 +1,54 @@
 package com.example.todolist.ui.home
 
-import androidx.lifecycle.*
-import com.example.todolist.data.local.Todo
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.todolist.data.network.Todo
 import com.example.todolist.data.repositories.TodoRepository
+import com.example.todolist.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TodoViewModel @Inject constructor(
-    private val repository: TodoRepository
-    ) : ViewModel() {
+    private val todoRepository: TodoRepository
+) : ViewModel() {
 
-    val allTodos = repository.getAllTodos().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    private val _todos = MutableStateFlow<List<Todo>>(emptyList())
+    val todos: StateFlow<List<Todo>>
+        get() = _todos
 
-    fun getTodo(id: Int) = repository.getTodo(id)
+    private val _todoStatus = MutableSharedFlow<Resource>()
+    val todoStatus: SharedFlow<Resource>
+        get() = _todoStatus
 
-    fun insertTodo(newTodo: Todo){
-        viewModelScope.launch {
-            repository.insert(newTodo)
-        }
+    init {
+        getAllTodo()
     }
 
-    fun updateTodo(updatedTodo: Todo){
-        viewModelScope.launch {
-            repository.update(updatedTodo)
-        }
+    private fun getAllTodo() = viewModelScope.launch {
+        _todos.value = todoRepository.getAllTodo()
     }
 
-    fun deleteTodo(todo: Todo){
-        viewModelScope.launch {
-            repository.delete(todo)
-        }
+    fun insertTodo(todoName: String) = viewModelScope.launch {
+        _todoStatus.emit(Resource.Loading())
+        todoRepository.insertTodo(todoName)
+        getAllTodo()
     }
+
+    fun updateTodo(updatedTodo: Todo) = viewModelScope.launch {
+        _todoStatus.emit(Resource.Loading())
+        todoRepository.updateTodo(updatedTodo)
+        getAllTodo()
+    }
+
+    fun deleteTodo(todoId: String) = viewModelScope.launch {
+        todoRepository.deleteTodo(todoId)
+        getAllTodo()
+    }
+
 }

@@ -29,11 +29,11 @@
             app:popUpTo="@id/todoFragment"
             app:popUpToInclusive="true" />
         <argument
-            android:name="todo_id"
-            app:argType="integer" />
-        <argument
             android:name="title"
             app:argType="string" />
+        <argument
+            android:name="todo"
+            app:argType="com.example.todolist.data.network.Todo" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
