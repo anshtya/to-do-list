@@ -6,14 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todolist.data.network.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
-import com.example.todolist.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TodoAddFragment : Fragment() {
@@ -40,20 +37,6 @@ class TodoAddFragment : Fragment() {
         } else {
             binding.btnSaveTodo.setOnClickListener {
                 addNewTodo()
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.todoStatus.collect{
-                when(it){
-                    is Resource.Loading -> {
-                        binding.apply {
-                            btnSaveTodo.visibility = View.INVISIBLE
-                            todoProgressBar.visibility = View.VISIBLE
-                        }
-                    }
-                    else -> {}
-                }
             }
         }
     }
