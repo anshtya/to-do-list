@@ -2,7 +2,7 @@ package com.example.todolist.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todolist.data.repositories.AuthRepository
+import com.example.todolist.domain.SignInUseCase
 import com.example.todolist.util.Resource
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val signInUseCase: SignInUseCase
 ) : ViewModel() {
 
     private val _userAuthorized = MutableSharedFlow<Resource>()
@@ -27,7 +27,7 @@ class AuthViewModel @Inject constructor(
     fun signUpUser(email: String, password: String) = viewModelScope.launch {
         _userAuthorized.emit(Resource.Loading())
         try {
-            authRepository.signUpUser(email, password)
+            signInUseCase.signUpUser(email, password)
             _userAuthorized.emit(Resource.Success())
         } catch (e: Exception) {
             _userAuthorized.emit(Resource.Error(e.message))
@@ -37,7 +37,7 @@ class AuthViewModel @Inject constructor(
     fun signInUser(email: String, password: String) = viewModelScope.launch {
         _userAuthorized.emit(Resource.Loading())
         try {
-            authRepository.signInUser(email, password)
+            signInUseCase.signInUser(email, password)
             _userAuthorized.emit(Resource.Success())
         } catch (e: Exception) {
             _userAuthorized.emit(Resource.Error(e.message))
@@ -47,7 +47,7 @@ class AuthViewModel @Inject constructor(
     fun signInWithGoogle(account: GoogleSignInAccount) = viewModelScope.launch {
         _userAuthorizedGoogle.emit(Resource.Loading())
         try{
-            authRepository.signInWithGoogle(account)
+            signInUseCase.signInWithGoogle(account)
             _userAuthorizedGoogle.emit(Resource.Success())
         } catch (e: Exception) {
             _userAuthorizedGoogle.emit(Resource.Error(e.message))
