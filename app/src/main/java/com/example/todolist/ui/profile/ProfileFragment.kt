@@ -10,9 +10,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.todolist.data.network.model.AuthResult
 import com.example.todolist.databinding.FragmentProfileBinding
 import com.example.todolist.ui.auth.AuthActivity
-import com.example.todolist.util.Resource
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,7 +37,7 @@ class ProfileFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userProfileDetails.collect { profile ->
-                    binding.tvUserEmail.text = profile.data?.userEmail
+                    binding.tvUserEmail.text = profile?.email
                 }
             }
         }
@@ -46,18 +46,18 @@ class ProfileFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userProfile.collect { profile ->
                     when (profile) {
-                        is Resource.Loading -> {
+                        is AuthResult.Loading -> {
                             binding.apply {
                                 btnDeleteAcc.visibility = View.INVISIBLE
                                 btnLogout.visibility = View.INVISIBLE
                                 profileProgressBar.visibility = View.VISIBLE
                             }
                         }
-                        is Resource.Success -> {
+                        is AuthResult.Success -> {
                             startActivity(Intent(context, AuthActivity::class.java))
                             requireActivity().finish()
                         }
-                        is Resource.Error -> {
+                        is AuthResult.Error -> {
                             binding.apply {
                                 btnDeleteAcc.visibility = View.VISIBLE
                                 btnLogout.visibility = View.VISIBLE
@@ -65,7 +65,7 @@ class ProfileFragment : Fragment() {
                             }
                             Snackbar.make(
                                 view,
-                                "${profile.message}",
+                                "${profile.e.message}",
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }
@@ -83,10 +83,5 @@ class ProfileFragment : Fragment() {
                 viewModel.deleteUser()
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.getUser()
     }
 }

@@ -2,7 +2,7 @@ package com.example.todolist.di
 
 import android.content.Context
 import com.example.todolist.R
-import com.example.todolist.data.network.DataStoreManager
+import com.example.todolist.data.network.datastore.DataStoreManager
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -13,11 +13,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideDefaultDispatcher() = Dispatchers.IO
 
     @Provides
     @Singleton

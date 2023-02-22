@@ -33,7 +33,7 @@
             app:argType="string" />
         <argument
             android:name="todo"
-            app:argType="com.example.todolist.data.network.Todo" />
+            app:argType="com.example.todolist.data.network.model.Todo" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"

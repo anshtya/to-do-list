@@ -1,6 +1,6 @@
 package com.example.todolist.domain
 
-import com.example.todolist.data.network.Todo
+import com.example.todolist.data.network.model.Todo
 import com.example.todolist.data.repositories.TodoRepository
 import javax.inject.Inject
 

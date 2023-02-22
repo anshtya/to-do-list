@@ -1,16 +1,14 @@
 package com.example.todolist.domain
 
-import com.example.todolist.data.repositories.AuthRepository
+import com.example.todolist.data.repositories.ProfileRepository
 import javax.inject.Inject
 
 class ProfileUseCase @Inject constructor(
-    private val authRepository: AuthRepository
+    private val profileRepository: ProfileRepository
 ) {
-    suspend fun getUser() = authRepository.getUser()
+    suspend fun getUser() = profileRepository.getUser()
 
-    suspend fun oneTapClientSignOut() = authRepository.oneTapClientSignOut()
+    suspend fun deleteAccount() = profileRepository.deleteAccount()
 
-    suspend fun firebaseAuthSignOut() = authRepository.firebaseAuthSignOut()
-
-    suspend fun deleteAccount() = authRepository.deleteAccount()
+    suspend fun signOutUser() = profileRepository.signOutUser()
 }

@@ -2,7 +2,7 @@ package com.example.todolist.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todolist.data.network.Todo
+import com.example.todolist.data.network.model.Todo
 import com.example.todolist.domain.TodosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -15,8 +15,7 @@ class TodoViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _todos = MutableStateFlow<List<Todo>>(emptyList())
-    val todos: StateFlow<List<Todo>>
-        get() = _todos
+    val todos = _todos.asStateFlow()
 
     init {
         getAllTodo()

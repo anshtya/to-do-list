@@ -1,11 +1,12 @@
 package com.example.todolist.data.repositories
 
-import com.example.todolist.data.network.Todo
-import com.example.todolist.data.network.User
+import com.example.todolist.data.network.model.Todo
+import com.example.todolist.data.network.model.User
 import com.example.todolist.util.Constants.Companion.TODOS
 import com.example.todolist.util.Constants.Companion.USERS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 class TodoRepository @Inject constructor(
     db: FirebaseFirestore,
-    auth: FirebaseAuth
+    auth: FirebaseAuth,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val todoCollection = db.collection(TODOS)
     private val userCollection = db.collection(USERS)
@@ -30,7 +32,7 @@ class TodoRepository @Inject constructor(
 
     suspend fun insertTodo(todoName: String) {
         val todoId = todoCollection.document().id
-        withContext(Dispatchers.IO) {
+        withContext(defaultDispatcher) {
             val currentUser = userCollection.document(userId).get().await()
                 .toObject(User::class.java)!!
 
@@ -40,7 +42,7 @@ class TodoRepository @Inject constructor(
     }
 
     suspend fun updateTodo(todo: Todo) {
-        withContext(Dispatchers.IO){
+        withContext(defaultDispatcher) {
             todoCollection.document(todo.id).update(mapOf(
                 "name" to todo.name,
                 "done" to todo.done
@@ -49,7 +51,7 @@ class TodoRepository @Inject constructor(
     }
 
     suspend fun deleteTodo(todoId: String) {
-        withContext(Dispatchers.IO){
+        withContext(defaultDispatcher) {
             todoCollection.document(todoId).delete().await()
         }
     }

@@ -14,10 +14,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.todolist.databinding.FragmentSignInBinding
 import com.example.todolist.ui.home.TodoActivity
-import com.example.todolist.util.Resource
-import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.example.todolist.data.network.model.AuthResult
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,27 +43,25 @@ class SignInFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userAuthorized.collect { currentUser ->
-                    when (currentUser) {
-                        is Resource.Loading -> {
+                viewModel.userAuthorized.collect { authResult ->
+                    when (authResult) {
+                        is AuthResult.Loading -> {
                             binding.apply {
                                 btLogin.visibility = View.INVISIBLE
                                 emailProgressBar.visibility = View.VISIBLE
                             }
                         }
-                        is Resource.Success -> {
+                        is AuthResult.Success -> {
                             startActivity(Intent(context, TodoActivity::class.java))
                             requireActivity().finish()
                         }
-                        is Resource.Error -> {
+                        is AuthResult.Error -> {
                             binding.apply {
                                 btLogin.visibility = View.VISIBLE
                                 emailProgressBar.visibility = View.GONE
                             }
                             Snackbar.make(
-                                view,
-                                "${currentUser.message}",
-                                Snackbar.LENGTH_SHORT
+                                view, "${authResult.e.message}", Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }
@@ -75,30 +71,26 @@ class SignInFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userAuthorizedGoogle.collect { currentUser ->
-                    when (currentUser) {
-                        is Resource.Loading -> {
+                viewModel.userAuthorizedGoogle.collect { authResult ->
+                    when (authResult) {
+                        is AuthResult.Loading -> {
                             binding.apply {
                                 googleProgressBar.visibility = View.VISIBLE
                                 btLoginGoogle.visibility = View.INVISIBLE
                             }
                         }
-                        is Resource.Success -> {
+                        is AuthResult.Success -> {
                             startActivity(Intent(context, TodoActivity::class.java))
                             requireActivity().finish()
                         }
-                        is Resource.Error -> {
+                        is AuthResult.Error -> {
                             binding.apply {
                                 btLoginGoogle.visibility = View.VISIBLE
                                 googleProgressBar.visibility = View.GONE
                             }
-                            if(currentUser.message != null){
-                                Snackbar.make(
-                                    view,
-                                    "${currentUser.message}",
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
-                            }
+                            Snackbar.make(
+                                view, "${authResult.e.message}", Snackbar.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -139,17 +131,6 @@ class SignInFragment : Fragment() {
 
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                viewModel.signInWithGoogle(account)
-            } catch (e: ApiException) {
-                viewModel.signInWithGoogleCancelled()
-                Snackbar.make(
-                    requireParentFragment().requireView(),
-                    "Request Failed",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }
+            viewModel.signInWithGoogle(result)
         }
 }

@@ -11,9 +11,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.todolist.data.network.model.AuthResult
 import com.example.todolist.databinding.FragmentSignUpBinding
 import com.example.todolist.ui.home.TodoActivity
-import com.example.todolist.util.Resource
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,27 +37,25 @@ class SignUpFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userAuthorized.collect { currentUser ->
-                    when (currentUser) {
-                        is Resource.Loading -> {
+                viewModel.userAuthorized.collect { authResult ->
+                    when (authResult) {
+                        is AuthResult.Loading -> {
                             binding.apply {
                                 btSignUp.visibility = View.INVISIBLE
                                 emailProgressBar.visibility = View.VISIBLE
                             }
                         }
-                        is Resource.Success -> {
+                        is AuthResult.Success -> {
                             startActivity(Intent(context, TodoActivity::class.java))
                             requireActivity().finish()
                         }
-                        is Resource.Error -> {
+                        is AuthResult.Error -> {
                             binding.apply {
                                 btSignUp.visibility = View.VISIBLE
                                 emailProgressBar.visibility = View.GONE
                             }
                             Snackbar.make(
-                                view,
-                                "${currentUser.message}",
-                                Snackbar.LENGTH_SHORT
+                                view, "${authResult.e.message}", Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }

@@ -1,60 +1,39 @@
 package com.example.todolist.ui.auth
 
+import androidx.activity.result.ActivityResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todolist.domain.SignInUseCase
-import com.example.todolist.util.Resource
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.example.todolist.domain.AuthUseCase
+import com.example.todolist.data.network.model.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val signInUseCase: SignInUseCase
+    private val authUseCase: AuthUseCase
 ) : ViewModel() {
 
-    private val _userAuthorized = MutableSharedFlow<Resource>()
-    val userAuthorized: SharedFlow<Resource>
-        get() = _userAuthorized
+    private val _userAuthorized = MutableSharedFlow<AuthResult>()
+    val userAuthorized = _userAuthorized.asSharedFlow()
 
-    private val _userAuthorizedGoogle = MutableSharedFlow<Resource>()
-    val userAuthorizedGoogle: SharedFlow<Resource>
-        get() = _userAuthorizedGoogle
+    private val _userAuthorizedGoogle = MutableSharedFlow<AuthResult>()
+    val userAuthorizedGoogle = _userAuthorizedGoogle.asSharedFlow()
 
     fun signUpUser(email: String, password: String) = viewModelScope.launch {
-        _userAuthorized.emit(Resource.Loading())
-        try {
-            signInUseCase.signUpUser(email, password)
-            _userAuthorized.emit(Resource.Success())
-        } catch (e: Exception) {
-            _userAuthorized.emit(Resource.Error(e.message))
-        }
+        _userAuthorized.emit(AuthResult.Loading)
+        _userAuthorized.emit(authUseCase.signUpUser(email, password))
     }
 
     fun signInUser(email: String, password: String) = viewModelScope.launch {
-        _userAuthorized.emit(Resource.Loading())
-        try {
-            signInUseCase.signInUser(email, password)
-            _userAuthorized.emit(Resource.Success())
-        } catch (e: Exception) {
-            _userAuthorized.emit(Resource.Error(e.message))
-        }
+        _userAuthorized.emit(AuthResult.Loading)
+        _userAuthorized.emit(authUseCase.signInUser(email, password))
     }
 
-    fun signInWithGoogle(account: GoogleSignInAccount) = viewModelScope.launch {
-        _userAuthorizedGoogle.emit(Resource.Loading())
-        try{
-            signInUseCase.signInWithGoogle(account)
-            _userAuthorizedGoogle.emit(Resource.Success())
-        } catch (e: Exception) {
-            _userAuthorizedGoogle.emit(Resource.Error(e.message))
-        }
-    }
-
-    fun signInWithGoogleCancelled() = viewModelScope.launch {
-        _userAuthorizedGoogle.emit(Resource.Error(null))
+    fun signInWithGoogle(result: ActivityResult) = viewModelScope.launch {
+        _userAuthorizedGoogle.emit(AuthResult.Loading)
+        _userAuthorizedGoogle.emit(authUseCase.signInWithGoogle(result))
     }
 }

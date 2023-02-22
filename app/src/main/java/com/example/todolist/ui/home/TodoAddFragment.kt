@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.todolist.data.network.Todo
+import com.example.todolist.data.network.model.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
 import dagger.hilt.android.AndroidEntryPoint
 

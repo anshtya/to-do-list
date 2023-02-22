@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "655381026-sbglqkgboc22rl2he9q3itnf5o0pokpt.apps.googleusercontent.com",
+          "client_id": "655381026-g4u59m0vf0i5e7ji35010poas82mujru.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.todolist",
-            "certificate_hash": "bd9eebc8bcf9f332d5f2ad9dbfd3be3c585de9de"
+            "certificate_hash": "f71eccd168ef87988fd291b0f03155092dab6b32"
           }
         },
         {
