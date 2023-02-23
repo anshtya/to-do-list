@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.todolist.data.network.model.AuthResult
+import com.example.todolist.data.network.model.Response
 import com.example.todolist.databinding.FragmentSignUpBinding
 import com.example.todolist.ui.home.TodoActivity
 import com.google.android.material.snackbar.Snackbar
@@ -37,25 +37,25 @@ class SignUpFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userAuthorized.collect { authResult ->
-                    when (authResult) {
-                        is AuthResult.Loading -> {
+                viewModel.userAuthorizedEmail.collect { response ->
+                    when (response) {
+                        is Response.Loading -> {
                             binding.apply {
                                 btSignUp.visibility = View.INVISIBLE
                                 emailProgressBar.visibility = View.VISIBLE
                             }
                         }
-                        is AuthResult.Success -> {
+                        is Response.Success -> {
                             startActivity(Intent(context, TodoActivity::class.java))
                             requireActivity().finish()
                         }
-                        is AuthResult.Error -> {
+                        is Response.Error -> {
                             binding.apply {
                                 btSignUp.visibility = View.VISIBLE
                                 emailProgressBar.visibility = View.GONE
                             }
                             Snackbar.make(
-                                view, "${authResult.e.message}", Snackbar.LENGTH_SHORT
+                                view, "${response.e?.message}", Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }

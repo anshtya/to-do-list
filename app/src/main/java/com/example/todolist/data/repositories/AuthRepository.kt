@@ -1,7 +1,7 @@
 package com.example.todolist.data.repositories
 
 import com.example.todolist.data.network.datastore.DataStoreManager
-import com.example.todolist.data.network.model.AuthResult
+import com.example.todolist.data.network.model.Response
 import com.example.todolist.data.network.model.User
 import com.example.todolist.util.Constants.Companion.USERS
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,26 +20,27 @@ class AuthRepository @Inject constructor(
     private val dataStore: DataStoreManager,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
+    val userAuthenticatedStatus = auth.currentUser != null
     suspend fun signUpUser(email: String, password: String) =
         withContext(defaultDispatcher) {
             try {
                 auth.createUserWithEmailAndPassword(email, password).await()
                 addUserToFirestore()
                 dataStore.savetoDataStore(password, authGoogle = false, authEmail = true)
-                AuthResult.Success
+                Response.Success(true)
             } catch (e: Exception) {
-                AuthResult.Error(e)
+                Response.Error(e)
             }
         }
 
-    suspend fun signInUser(email: String, password: String): AuthResult =
+    suspend fun signInUser(email: String, password: String) =
         withContext(defaultDispatcher) {
             try {
                 auth.signInWithEmailAndPassword(email, password).await()
                 dataStore.savetoDataStore(password, authGoogle = false, authEmail = true)
-                AuthResult.Success
+                Response.Success(true)
             } catch (e: Exception) {
-                AuthResult.Error(e)
+                Response.Error(e)
             }
         }
 
@@ -54,9 +55,9 @@ class AuthRepository @Inject constructor(
                     addUserToFirestore()
                 }
                 dataStore.savetoDataStore(password = "", authGoogle = true, authEmail = false)
-                AuthResult.Success
+                Response.Success(true)
             } catch (e: Exception) {
-                AuthResult.Error(e)
+                Response.Error(e)
             }
         }
 

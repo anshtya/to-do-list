@@ -2,6 +2,7 @@ package com.example.todolist.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todolist.data.network.model.Response
 import com.example.todolist.data.network.model.Todo
 import com.example.todolist.domain.TodosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,32 +15,27 @@ class TodoViewModel @Inject constructor(
     private val todosUseCase: TodosUseCase
 ) : ViewModel() {
 
-    private val _todos = MutableStateFlow<List<Todo>>(emptyList())
+    private val _todos = MutableStateFlow<Response<List<Todo>>>(Response.Loading)
     val todos = _todos.asStateFlow()
 
     init {
-        getAllTodo()
-    }
-
-    private fun getAllTodo() = viewModelScope.launch {
-        todosUseCase.todos.collect{ todos ->
-            _todos.value = todos
+        viewModelScope.launch {
+            todosUseCase.getTodos().collect{ todos ->
+                _todos.value = todos
+            }
         }
     }
 
     fun insertTodo(todoName: String) = viewModelScope.launch {
         todosUseCase.insertTodo(todoName)
-        getAllTodo()
     }
 
     fun updateTodo(updatedTodo: Todo) = viewModelScope.launch {
         todosUseCase.updateTodo(updatedTodo)
-        getAllTodo()
     }
 
     fun deleteTodo(todoId: String) = viewModelScope.launch {
         todosUseCase.deleteTodo(todoId)
-        getAllTodo()
     }
 
 }

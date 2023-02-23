@@ -10,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.todolist.data.network.model.AuthResult
+import com.example.todolist.data.network.model.Response
 import com.example.todolist.databinding.FragmentProfileBinding
 import com.example.todolist.ui.auth.AuthActivity
 import com.google.android.material.snackbar.Snackbar
@@ -44,20 +44,20 @@ class ProfileFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userProfile.collect { profile ->
-                    when (profile) {
-                        is AuthResult.Loading -> {
+                viewModel.userProfile.collect { response ->
+                    when (response) {
+                        is Response.Loading -> {
                             binding.apply {
                                 btnDeleteAcc.visibility = View.INVISIBLE
                                 btnLogout.visibility = View.INVISIBLE
                                 profileProgressBar.visibility = View.VISIBLE
                             }
                         }
-                        is AuthResult.Success -> {
+                        is Response.Success -> {
                             startActivity(Intent(context, AuthActivity::class.java))
                             requireActivity().finish()
                         }
-                        is AuthResult.Error -> {
+                        is Response.Error -> {
                             binding.apply {
                                 btnDeleteAcc.visibility = View.VISIBLE
                                 btnLogout.visibility = View.VISIBLE
@@ -65,7 +65,7 @@ class ProfileFragment : Fragment() {
                             }
                             Snackbar.make(
                                 view,
-                                "${profile.e.message}",
+                                "${response.e?.message}",
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }

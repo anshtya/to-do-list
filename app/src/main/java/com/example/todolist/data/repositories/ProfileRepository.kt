@@ -1,7 +1,7 @@
 package com.example.todolist.data.repositories
 
-import com.example.todolist.data.network.model.AuthResult
 import com.example.todolist.data.network.datastore.DataStoreManager
+import com.example.todolist.data.network.model.Response
 import com.example.todolist.util.Constants
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.EmailAuthProvider
@@ -30,9 +30,9 @@ class ProfileRepository @Inject constructor(
             try {
                 oneTapClient.signOut().await()
                 firebaseAuthSignOut()
-                AuthResult.Success
+                Response.Success(true)
             } catch (e: Exception) {
-                AuthResult.Error(e)
+                Response.Error(e)
             }
         }
 
@@ -69,9 +69,9 @@ class ProfileRepository @Inject constructor(
                     }
                 db.collection(Constants.USERS).document(userId).delete().await()
                 firebaseAuthSignOut()
-                AuthResult.Success
+                Response.Success(true)
             } catch (e: Exception) {
-                AuthResult.Error(e)
+                Response.Error(e)
             }
         }
 
