@@ -1,18 +1,17 @@
 package com.example.todolist.ui.profile
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.todolist.data.network.model.Response
+import androidx.navigation.fragment.findNavController
+import com.example.todolist.domain.model.Response
 import com.example.todolist.databinding.FragmentProfileBinding
-import com.example.todolist.ui.auth.AuthActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -20,19 +19,21 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
-    private lateinit var binding: FragmentProfileBinding
-    private val viewModel: ProfileViewModel by activityViewModels()
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setToolbar()
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -54,8 +55,9 @@ class ProfileFragment : Fragment() {
                             }
                         }
                         is Response.Success -> {
-                            startActivity(Intent(context, AuthActivity::class.java))
-                            requireActivity().finish()
+                            val action =
+                                ProfileFragmentDirections.actionProfileFragmentToSignInFragment()
+                            findNavController().navigate(action)
                         }
                         is Response.Error -> {
                             binding.apply {
@@ -83,5 +85,14 @@ class ProfileFragment : Fragment() {
                 viewModel.deleteUser()
             }
         }
+    }
+
+    private fun setToolbar() {
+        binding.profileFragmentToolbar.title = findNavController().currentDestination?.label
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,7 +1,7 @@
 package com.example.todolist.domain
 
-import com.example.todolist.data.network.model.Todo
 import com.example.todolist.data.repositories.TodoRepository
+import com.example.todolist.domain.model.Todo
 import javax.inject.Inject
 
 class TodosUseCase @Inject constructor(

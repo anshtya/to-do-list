@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.data.network.model.Todo
-import com.example.todolist.data.network.model.Response
+import com.example.todolist.domain.model.Todo
+import com.example.todolist.domain.model.Response
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -25,21 +25,23 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class TodoFragment : Fragment(), TodoEvents {
 
-    private lateinit var binding: FragmentTodoBinding
+    private var _binding: FragmentTodoBinding? = null
+    private val binding get() = _binding!!
     private lateinit var listRecyclerView: RecyclerView
     private lateinit var todoAdapter: TodoAdapter
-    private val viewModel: TodoViewModel by activityViewModels()
+    private val viewModel: TodoViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTodoBinding.inflate(inflater, container, false)
+        _binding = FragmentTodoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setToolbar()
         setRecyclerView()
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -120,6 +122,10 @@ class TodoFragment : Fragment(), TodoEvents {
         }
     }
 
+    private fun setToolbar() {
+        binding.todoFragmentToolbar.title = findNavController().currentDestination?.label
+    }
+
     private fun onTodoEdit(todo: Todo) {
         val action = TodoFragmentDirections.actionTodoFragmentToTodoAddFragment(
             getString(R.string.edit),todo
@@ -132,5 +138,10 @@ class TodoFragment : Fragment(), TodoEvents {
     }
     override fun callTodoDialog(todo: Todo) {
         showTodoDialog(todo)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,20 +1,19 @@
 package com.example.todolist.ui.auth
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.todolist.R
 import com.example.todolist.databinding.FragmentSignInBinding
-import com.example.todolist.ui.home.TodoActivity
-import com.example.todolist.data.network.model.Response
+import com.example.todolist.domain.model.Response
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,8 +23,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SignInFragment : Fragment() {
 
-    private lateinit var binding: FragmentSignInBinding
-    private val viewModel: AuthViewModel by activityViewModels()
+    private var _binding: FragmentSignInBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: AuthViewModel by viewModels()
 
     @Inject
     lateinit var googleSignInClient: GoogleSignInClient
@@ -34,16 +34,20 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSignInBinding.inflate(inflater, container, false)
+        _binding = FragmentSignInBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (viewModel.userAuthenticatedStatus) {
+            findNavController().navigate(R.id.action_todoFragment)
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userAuthorizedEmail.collect { response->
+                viewModel.userAuthorizedEmail.collect { response ->
                     when (response) {
                         is Response.Loading -> {
                             binding.apply {
@@ -52,8 +56,7 @@ class SignInFragment : Fragment() {
                             }
                         }
                         is Response.Success -> {
-                            startActivity(Intent(context, TodoActivity::class.java))
-                            requireActivity().finish()
+                            findNavController().navigate(R.id.action_todoFragment)
                         }
                         is Response.Error -> {
                             binding.apply {
@@ -80,8 +83,7 @@ class SignInFragment : Fragment() {
                             }
                         }
                         is Response.Success -> {
-                            startActivity(Intent(context, TodoActivity::class.java))
-                            requireActivity().finish()
+                            findNavController().navigate(R.id.action_todoFragment)
                         }
                         is Response.Error -> {
                             binding.apply {
@@ -133,4 +135,9 @@ class SignInFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             viewModel.signInWithGoogle(result)
         }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

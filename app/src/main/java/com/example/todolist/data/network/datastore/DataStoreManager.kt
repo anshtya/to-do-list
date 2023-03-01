@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.todolist.data.network.model.AuthPreferences
+import com.example.todolist.data.network.model.Auth
 import kotlinx.coroutines.flow.map
 
 class DataStoreManager(val context: Context) {
@@ -31,7 +31,7 @@ class DataStoreManager(val context: Context) {
     }
 
     val authPreference = context.dataStore.data.map {
-        AuthPreferences(
+        Auth(
             it[PASSWORD] ?: "", it[AUTH_GOOGLE] ?: false, it[AUTH_EMAIL] ?: false
         )
     }

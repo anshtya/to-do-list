@@ -10,7 +10,6 @@ This app is implemented in different ways which can be found in their respective
 |<a href="https://github.com/anshtya/ToDoList/tree/room-persistence">room-persistence</a>|Implemented using <a href="https://developer.android.com/training/data-storage/room">Room</a> persistence library. |
 
 ## 👨‍💻Tech Stack
-- <a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVVM Architecture</a> - Seperating UI from business logic.
 - <a href="https://developer.android.com/training/dependency-injection/hilt-android">Hilt</a> - Dependency injection library.
 - <a href="https://developer.android.com/training/data-storage/room">Room</a> - Provides an abstraction layer over SQLite used for offline data caching.
 - <a href="https://developer.android.com/kotlin/flow">Flow</a> and <a href="https://developer.android.com/kotlin/coroutines">Coroutines</a> - Perform asynchronous programming.

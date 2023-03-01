@@ -1,4 +1,4 @@
-package com.example.todolist.data.network.model
+package com.example.todolist.domain.model
 
 import java.io.Serializable
 

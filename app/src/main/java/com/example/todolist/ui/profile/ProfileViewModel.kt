@@ -3,7 +3,7 @@ package com.example.todolist.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todolist.domain.ProfileUseCase
-import com.example.todolist.data.network.model.Response
+import com.example.todolist.domain.model.Response
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*

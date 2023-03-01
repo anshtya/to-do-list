@@ -6,19 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.ProfileFragment">
 
-    <TextView
-        android:id="@+id/profileText"
-        style="@style/Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
-        android:text="@string/profileText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.018"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/profileFragmentToolbar"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:titleTextAppearance="@style/Title" />
 
     <TextView
         android:id="@+id/userEmail"
@@ -31,7 +26,7 @@
         android:textSize="20sp"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileText" />
+        app:layout_constraintTop_toBottomOf="@+id/profileFragmentToolbar" />
 
     <TextView
         android:id="@+id/tvUserEmail"

@@ -5,18 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.todolist.data.network.model.Todo
+import com.example.todolist.domain.model.Todo
 import com.example.todolist.databinding.FragmentTodoAddBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TodoAddFragment : Fragment() {
 
-    private lateinit var binding: FragmentTodoAddBinding
-    private val viewModel: TodoViewModel by activityViewModels()
+    private var _binding: FragmentTodoAddBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: TodoViewModel by viewModels()
 
     private val navigationArgs: TodoAddFragmentArgs by navArgs()
 
@@ -25,12 +26,13 @@ class TodoAddFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTodoAddBinding.inflate(inflater, container, false)
+        _binding = FragmentTodoAddBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setToolbar(title = navigationArgs.title)
         val todo = navigationArgs.todo
         if(todo.id != ""){
             bind(todo)
@@ -39,6 +41,7 @@ class TodoAddFragment : Fragment() {
                 addNewTodo()
             }
         }
+
     }
 
     private fun addNewTodo(){
@@ -67,5 +70,14 @@ class TodoAddFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
+    }
+
+    private fun setToolbar(title: String) {
+        binding.todoAddFragmentToolbar.title = title
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
