@@ -23,57 +23,50 @@ class TodoRepository @Inject constructor(
 
     fun getTodos() = callbackFlow {
         val userId = auth.currentUser!!.uid
-        val todoCollection = db.collection(TODOS)
-        val snapshotListener = todoCollection.whereEqualTo("createdBy.userId", userId)
-            .addSnapshotListener { snapshot, e ->
-                val todoResponse = if (snapshot != null) {
-                    val todos = snapshot.toObjects(Todo::class.java)
-                    Response.Success(todos)
-                } else {
-                    Response.Error(e)
-                }
-                trySend(todoResponse)
+        val userTodos = db.collection(TODOS).whereEqualTo("createdBy.userId", userId)
+        val snapshotListener = userTodos.addSnapshotListener { snapshot, e ->
+            val todoResponse = if (snapshot != null) {
+                val todos = snapshot.toObjects(Todo::class.java)
+                Response.Success(todos)
+            } else {
+                Response.Error(e)
             }
-            awaitClose {
-                snapshotListener.remove()
-            }
+            trySend(todoResponse)
+        }
+        awaitClose {
+            snapshotListener.remove()
+        }
     }
 
     suspend fun insertTodo(todoName: String) {
+        val userId = auth.currentUser!!.uid
+        val todoId = db.collection(TODOS).document().id
+        val user = db.collection(USERS).document(userId)
+        val todoDocument = db.collection(TODOS).document(todoId)
+
         withContext(defaultDispatcher) {
-            val todoCollection = db.collection(TODOS)
-            val userCollection = db.collection(USERS)
-            val userId = auth.currentUser!!.uid
-            val todoId = todoCollection.document().id
-
-            userCollection.document(userId).get().addOnSuccessListener { document ->
-                if (document != null) {
-                    val currentUser = document.toObject<User>()
-                    val todo = Todo(todoId, todoName, currentUser!!)
-                    todoCollection.document(todoId).set(todo)
-                }
-            }
-
-//            val currentUser = userCollection.document(userId).get().await().toObject<User>()
-//            val todo = Todo(todoId, todoName, currentUser!!)
-//            todoCollection.document(todoId).set(todo).await()
+            val currentUser = user.get().await().toObject<User>()
+            val todo = Todo(todoId, todoName, currentUser!!)
+            todoDocument.set(todo).await()
         }
     }
 
     suspend fun updateTodo(todo: Todo) {
+        val todoDocument = db.collection(TODOS).document(todo.id)
         withContext(defaultDispatcher) {
-            val todoCollection = db.collection(TODOS)
-            todoCollection.document(todo.id).update(mapOf(
-                "name" to todo.name,
-                "done" to todo.done
-            )).await()
+            todoDocument.update(
+                mapOf(
+                    "name" to todo.name,
+                    "done" to todo.done
+                )
+            ).await()
         }
     }
 
     suspend fun deleteTodo(todoId: String) {
+        val todoDocument = db.collection(TODOS).document(todoId)
         withContext(defaultDispatcher) {
-            val todoCollection = db.collection(TODOS)
-            todoCollection.document(todoId).delete().await()
+            todoDocument.delete().await()
         }
     }
 }

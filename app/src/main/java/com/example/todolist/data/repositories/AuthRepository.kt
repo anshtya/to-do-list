@@ -3,7 +3,7 @@ package com.example.todolist.data.repositories
 import com.example.todolist.data.network.datastore.DataStoreManager
 import com.example.todolist.domain.model.Response
 import com.example.todolist.domain.model.User
-import com.example.todolist.util.Constants
+import com.example.todolist.util.Constants.Companion.TODOS
 import com.example.todolist.util.Constants.Companion.USERS
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -105,21 +105,17 @@ class AuthRepository @Inject constructor(
                 if (authGoogle) {
                     oneTapClient.signOut().await()
                 } else if (authEmail) {
-                    val credential = EmailAuthProvider
-                        .getCredential(userEmail, password)
+                    val credential = EmailAuthProvider.getCredential(userEmail, password)
                     currentUser.reauthenticate(credential).await()
                 }
 
                 currentUser.delete().await()
-                db.collection(Constants.TODOS).whereEqualTo("createdBy.userId", userId).get()
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val documents = it.result.documents
-                            for (document in documents) {
-                                db.collection(Constants.TODOS).document(document.id).delete()
-                            }
-                        }
-                    }
+                val userTodos =
+                    db.collection(TODOS).whereEqualTo("createdBy.userId", userId).get()
+                        .await().documents
+                for (todo in userTodos) {
+                    db.collection(TODOS).document(todo.id).delete().await()
+                }
                 db.collection(USERS).document(userId).delete().await()
                 firebaseAuthSignOut()
                 Response.Success(true)
