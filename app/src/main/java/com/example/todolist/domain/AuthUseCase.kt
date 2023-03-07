@@ -2,7 +2,7 @@ package com.example.todolist.domain
 
 import androidx.activity.result.ActivityResult
 import com.example.todolist.data.repositories.AuthRepository
-import com.example.todolist.domain.model.Response
+import com.example.todolist.data.network.model.Response
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import javax.inject.Inject

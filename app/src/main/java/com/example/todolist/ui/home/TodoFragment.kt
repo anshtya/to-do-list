@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.domain.model.Todo
-import com.example.todolist.domain.model.Response
+import com.example.todolist.data.network.model.Todo
+import com.example.todolist.data.network.model.Response
 import com.example.todolist.databinding.FragmentTodoBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar

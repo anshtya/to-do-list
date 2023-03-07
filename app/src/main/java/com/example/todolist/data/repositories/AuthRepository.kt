@@ -1,8 +1,8 @@
 package com.example.todolist.data.repositories
 
 import com.example.todolist.data.network.datastore.DataStoreManager
-import com.example.todolist.domain.model.Response
-import com.example.todolist.domain.model.User
+import com.example.todolist.data.network.model.Response
+import com.example.todolist.data.network.model.User
 import com.example.todolist.util.Constants.Companion.TODOS
 import com.example.todolist.util.Constants.Companion.USERS
 import com.google.android.gms.auth.api.identity.SignInClient

@@ -2,8 +2,8 @@ package com.example.todolist.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todolist.domain.model.Response
-import com.example.todolist.domain.model.Todo
+import com.example.todolist.data.network.model.Response
+import com.example.todolist.data.network.model.Todo
 import com.example.todolist.domain.TodosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
