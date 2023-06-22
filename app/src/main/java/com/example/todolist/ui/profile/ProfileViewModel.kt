@@ -2,8 +2,8 @@ package com.example.todolist.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todolist.domain.ProfileUseCase
 import com.example.todolist.data.network.model.Response
+import com.example.todolist.data.repositories.AuthRepository
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileUseCase: ProfileUseCase
+    private val authRepository: AuthRepository
 ): ViewModel() {
 
     private val _userProfile = MutableSharedFlow<Response<Boolean>>()
@@ -26,16 +26,16 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun getUser() = viewModelScope.launch {
-        _userProfileDetails.value = profileUseCase.getUser()
+        _userProfileDetails.value = authRepository.getUser()
     }
 
     fun signOutUser() = viewModelScope.launch {
         _userProfile.emit(Response.Loading)
-        _userProfile.emit(profileUseCase.signOutUser())
+        _userProfile.emit(authRepository.signOutUser())
     }
 
     fun deleteUser() = viewModelScope.launch{
         _userProfile.emit(Response.Loading)
-        _userProfile.emit(profileUseCase.deleteAccount())
+        _userProfile.emit(authRepository.deleteAccount())
     }
 }
